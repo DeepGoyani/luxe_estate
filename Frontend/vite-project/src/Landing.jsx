@@ -1,13 +1,57 @@
-import { useState } from "react";
-import "./App.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./Landing.css";
+import { useGlobalContext } from "./Context/GlobalCOntext";
+
+const API_URL = "http://localhost:3000/api";
 
 const LuxeEstate = () => {
+  const { currency, setCurrency, language, setLanguage } = useGlobalContext();
   const [email, setEmail] = useState("");
-  const [currency, setCurrency] = useState("INR");
-  const [language, setLanguage] = useState("English");
+  const [products, setProducts] = useState({});
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
-  const handleEmailSubmit = (e) => {
+  const currencies = ["INR", "USD", "EUR", "GBP", "JPY"];
+  const languages = ["English", "Hindi", "Spanish", "French", "German"];
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const categories = ["men", "women", "tshirt", "shirt", "trousers"];
+        const responses = await Promise.all(
+          categories.map((category) => axios.get(`${API_URL}/${category}`))
+        );
+        const data = responses.reduce((acc, res, index) => {
+          acc[categories[index]] = res.data;
+          return acc;
+        }, {});
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await axios.post(`${API_URL}/newsletter`, { email });
+      alert("Subscribed successfully!");
+      setEmail("");
+    } catch (err) {
+      alert("Failed to subscribe");
+    }
+  };
+
+  const addToCart = async (productId) => {
+    try {
+      await axios.post(`${API_URL}/cart`, { productId, quantity: 1 });
+      alert("Item added to cart");
+    } catch (err) {
+      alert("Failed to add item to cart");
+    }
   };
 
   return (
@@ -16,20 +60,52 @@ const LuxeEstate = () => {
         <h1>The Luxe Estate</h1>
       </header>
 
+      {/* Navbar */}
       <nav className="navbar">
         <div className="nav-links">
-          <button>Shop Men</button>
-          <button>Shop Women</button>
-          <button>Support</button>
+          <button className="nav-btn">Shop Men</button>
+          <button className="nav-btn">Shop Women</button>
+          <button className="nav-btn">Contact Us</button>
         </div>
+
         <div className="nav-controls">
-          <button onClick={() => setCurrency("INR")}>{currency} ▼</button>
-          <button onClick={() => setLanguage("English")}>{language} ▼</button>
-          <button>🛒</button>
+          {/* Currency Dropdown */}
+          <div className="dropdown">
+            <button onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}>
+              {currency} ▼
+            </button>
+            {showCurrencyDropdown && (
+              <ul className="dropdown-menu">
+                {currencies.map((cur) => (
+                  <li key={cur} onClick={() => setCurrency(cur)}>
+                    {cur}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Language Dropdown */}
+          <div className="dropdown">
+            <button onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}>
+              {language} ▼
+            </button>
+            {showLanguageDropdown && (
+              <ul className="dropdown-menu">
+                {languages.map((lang) => (
+                  <li key={lang} onClick={() => setLanguage(lang)}>
+                    {lang}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <button className="cart-btn">🛒</button>
         </div>
       </nav>
 
-      {/* Hero Section with Video Background */}
+      {/* Hero Section */}
       <section className="hero-section">
         <video autoPlay loop muted playsInline className="hero-video">
           <source
@@ -39,77 +115,45 @@ const LuxeEstate = () => {
           Your browser does not support the video tag.
         </video>
         <div className="hero-overlay">
-          <h2>Luxury Starts and Ends From Us</h2>
-          <button className="shop-btn">Shop Exclusive Products</button>
+          <h2>{language === "Hindi" ? "लक्ज़री हमसे शुरू होती है" : "Luxury Starts and Ends With Us"}</h2>
+          <button className="shop-btn">
+            {language === "Hindi" ? "विशेष उत्पाद खरीदें" : "Shop Exclusive Products"}
+          </button>
         </div>
       </section>
 
-      <section className="about-section">
-        <h2>Our Aim</h2>
-        <p>
-          At Old Money Clothing, our aim is to provide timeless, high-quality
-          attire that embodies elegance and sophistication.
-        </p>
-      </section>
-
-      {["T-shirt", "Shirt", "Trousers", "Women"].map((category) => (
+      {/* Product Sections */}
+      {Object.keys(products).map((category) => (
         <section key={category} className="product-section">
-          <h2>{category} Collection</h2>
+          <h2>{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
           <div className="product-grid">
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="product-card">
+            {products[category]?.map((product) => (
+              <div key={product._id} className="product-card">
                 <div className="product-image">
-                  <img src={`https://via.placeholder.com/150`} alt="Product" />
+                  <img src={product.image || "https://via.placeholder.com/150"} alt={product.name} />
                   <span className="sale-tag">Sale</span>
                 </div>
-                <h3>Carlton Cable-Knit Vest</h3>
+                <h3>{product.name}</h3>
                 <p>⭐⭐⭐⭐⭐</p>
-                <p className="price">Rs1899.00 Rs 1,299.00</p>
+                <p className="price">
+                  {currency} {product.price}
+                </p>
+                <button onClick={() => addToCart(product._id)}>Add to Cart</button>
               </div>
             ))}
           </div>
-          <button className="view-all-btn">View all...</button>
+          <button className="show-all-btn">Show All</button>
         </section>
       ))}
 
+      {/* Footer */}
       <footer className="footer">
         <div className="footer-columns">
           <div>
             <h3>The Luxe Estate</h3>
             <p>Kedar Business Hub, Katargam, Surat, Gujarat</p>
           </div>
-          <div>
-            <h4>Links</h4>
-            <nav>
-              <a href="#">Home</a>
-              <a href="#">Shop</a>
-              <a href="#">About</a>
-              <a href="#">Contact</a>
-            </nav>
-          </div>
-          <div>
-            <h4>Help</h4>
-            <nav>
-              <a href="#">Payment Options</a>
-              <a href="#">Returns</a>
-              <a href="#">Privacy Policies</a>
-            </nav>
-          </div>
-          <div>
-            <h4>Newsletter</h4>
-            <form onSubmit={handleEmailSubmit}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter Your Email"
-                required
-              />
-              <button type="submit">SUBSCRIBE</button>
-            </form>
-          </div>
         </div>
-        <p className="copyright">© 2023 The Luxe Estate. All rights reserved.</p>
       </footer>
     </div>
   );
