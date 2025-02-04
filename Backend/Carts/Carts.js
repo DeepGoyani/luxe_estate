@@ -24,10 +24,9 @@ const connectDB = async () => {
 
 connectDB();
 
-// **Add product to cart**
 app.post("/cart/add", async (req, res) => {
     try {
-        const { productId, name, price, quantity, image } = req.body;
+        const { productId, name, price, quantity } = req.body;
         const existingItem = await db.collection("cart").findOne({ productId });
 
         if (existingItem) {
@@ -38,7 +37,7 @@ app.post("/cart/add", async (req, res) => {
             return res.json({ message: "Quantity updated in cart" });
         }
 
-        const newItem = { productId, name, price, quantity, image };
+        const newItem = { productId, name, price, quantity };
         await db.collection("cart").insertOne(newItem);
         res.status(201).json({ message: "Product added to cart" });
     } catch (error) {
@@ -46,7 +45,6 @@ app.post("/cart/add", async (req, res) => {
     }
 });
 
-// **Get all cart items**
 app.get("/cart", async (req, res) => {
     try {
         const cartItems = await db.collection("cart").find().toArray();
@@ -56,7 +54,6 @@ app.get("/cart", async (req, res) => {
     }
 });
 
-// **Update cart item quantity**
 app.put("/cart/update/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,7 +72,6 @@ app.put("/cart/update/:id", async (req, res) => {
     }
 });
 
-// **Remove an item from cart**
 app.delete("/cart/remove/:id", async (req, res) => {
     try {
         const { id } = req.params;
