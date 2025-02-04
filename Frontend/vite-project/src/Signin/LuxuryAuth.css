@@ -1,0 +1,111 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap");
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5e6d3;
+  font-family: "Playfair Display", serif;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.form-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+  color: #8b4513;
+  font-size: 2.5em;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  border-bottom: 2px solid #d2b48c;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  color: #8b4513;
+}
+
+.input-field:focus {
+  outline: none;
+  border-bottom-color: #8b4513;
+}
+
+.input-field::placeholder {
+  color: #d2b48c;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #8b4513;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.submit-btn:hover {
+  background-color: #a0522d;
+  transform: scale(1.05);
+}
+
+.toggle-text {
+  margin-top: 20px;
+  color: #8b4513;
+}
+
+.toggle-link {
+  color: #d2691e;
+  cursor: pointer;
+  margin-left: 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
+  color: #8b4513;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.input-field:hover,
+.submit-btn:hover {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 215, 0, 0.1) 0%,
+    rgba(255, 215, 0, 0.3) 50%,
+    rgba(255, 215, 0, 0.1) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite linear;
+}
+

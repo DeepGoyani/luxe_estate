@@ -1,10 +1,11 @@
-import ReactDOM from "react-dom";
-import { GlobalProvider } from "./Context/GlobalCOntext"
-import "./Landing.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import LuxeEstate from "./Landing";
+import LuxuryAuth from "./Signin/LuxuryAuth";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <GlobalProvider>
-<LuxeEstate/>
-  </GlobalProvider>
+    <React.StrictMode>
+      <LuxeEstate/>
+      {/* <LuxuryAuth/>  */}
+    </React.StrictMode>
 );

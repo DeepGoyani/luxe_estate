@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Landing.css";
-import { useGlobalContext } from "./Context/GlobalCOntext";
 
 const API_URL = "http://localhost:3000/api";
 
 const LuxeEstate = () => {
-  const { currency, setCurrency, language, setLanguage } = useGlobalContext();
   const [email, setEmail] = useState("");
   const [products, setProducts] = useState({});
+  const [currency, setCurrency] = useState("USD");
+  const [language, setLanguage] = useState("English");
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
@@ -128,17 +128,21 @@ const LuxeEstate = () => {
           <h2>{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
           <div className="product-grid">
             {products[category]?.map((product) => (
-              <div key={product._id} className="product-card">
-                <div className="product-image">
+              <div key={product._id} className="luxury-product-card">
+                <div className="luxury-product-image">
                   <img src={product.image || "https://via.placeholder.com/150"} alt={product.name} />
-                  <span className="sale-tag">Sale</span>
+                  {product.sale && <span className="sale-tag">Sale</span>}
                 </div>
-                <h3>{product.name}</h3>
-                <p>⭐⭐⭐⭐⭐</p>
-                <p className="price">
-                  {currency} {product.price}
-                </p>
-                <button onClick={() => addToCart(product._id)}>Add to Cart</button>
+                <div className="luxury-product-info">
+                  <h3 className="product-name">{product.name}</h3>
+                  <p className="luxury-rating">⭐⭐⭐⭐⭐</p>
+                  <p className="luxury-price">
+                    {currency} {product.price}
+                  </p>
+                  <button className="luxury-add-to-cart" onClick={() => addToCart(product._id)}>
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -149,10 +153,42 @@ const LuxeEstate = () => {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-columns">
-          <div>
-            <h3>The Luxe Estate</h3>
-            <p>Kedar Business Hub, Katargam, Surat, Gujarat</p>
-          </div>
+          <h3>The Luxe Estate</h3>
+          <p>Kedar Business Hub Katargam Ved Road Surat Gujarat</p>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Shop</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div className="footer-columns">
+          <h4>Links</h4>
+          <ul>
+            <li><a href="#">Payment Options</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Privacy Policies</a></li>
+          </ul>
+        </div>
+        <div className="footer-columns">
+          <h4>Help</h4>
+          {/* Add your help links here */}
+        </div>
+        <div className="footer-columns">
+          <h4>Newsletter</h4>
+          <form onSubmit={handleNewsletterSubmit}>
+            <input
+              type="email"
+              placeholder="Enter Your Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <button type="submit">SUBSCRIBE</button>
+          </form>
+        </div>
+        <div className="copyright">
+          <p>2023 The Luxe Estate. All rights reserved</p>
         </div>
       </footer>
     </div>
