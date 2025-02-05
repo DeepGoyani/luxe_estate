@@ -1,24 +1,26 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import "./Landing.css";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './Landing.css';
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = 'http://localhost:3000/api';
 
 const LuxeEstate = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [products, setProducts] = useState({});
-  const [currency, setCurrency] = useState("USD");
-  const [language, setLanguage] = useState("English");
+  const [currency, setCurrency] = useState('USD');
+  const [language, setLanguage] = useState('English');
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const currencies = ["INR", "USD", "EUR", "GBP", "JPY"];
-  const languages = ["English", "Hindi", "Spanish", "French", "German"];
+  const currencies = ['INR', 'USD', 'EUR', 'GBP', 'JPY'];
+  const languages = ['English', 'Hindi', 'Spanish', 'French', 'German'];
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const categories = ["men", "women", "tshirt", "shirt", "trousers"];
+        const categories = ['men', 'women', 'tshirt', 'shirt', 'trousers'];
         const responses = await Promise.all(
           categories.map((category) => axios.get(`${API_URL}/${category}`))
         );
@@ -27,8 +29,11 @@ const LuxeEstate = () => {
           return acc;
         }, {});
         setProducts(data);
+        setLoading(false);
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error('Error fetching products:', err);
+        setError('Failed to load products');
+        setLoading(false);
       }
     };
     fetchProducts();
@@ -36,28 +41,42 @@ const LuxeEstate = () => {
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
+    if (!email) {
+      alert('Please enter a valid email address.');
+      return;
+    }
     try {
-      await axios.post(`${API_URL}/newsletter`, { email });
-      alert("Subscribed successfully!");
-      setEmail("");
+      // Save email to localStorage
+      localStorage.setItem('subscriberEmail', email);
+      await axios.post(`${API_URL}/subscribers`, { email });
+      alert('Subscribed successfully!');
+      setEmail('');
     } catch (err) {
-      alert("Failed to subscribe");
+      alert('Failed to subscribe');
     }
   };
 
   const addToCart = async (productId) => {
     try {
       await axios.post(`${API_URL}/cart`, { productId, quantity: 1 });
-      alert("Item added to cart");
+      alert('Item added to cart');
     } catch (err) {
-      alert("Failed to add item to cart");
+      alert('Failed to add item to cart');
     }
   };
+
+  // Retrieve saved email from localStorage
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('subscriberEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+    }
+  }, []);
 
   return (
     <div className="container">
       <header className="header">
-        <h1>The Luxe Estate</h1>
+        <h1 className='le'>The Luxe Estate</h1>
       </header>
 
       {/* Navbar */}
@@ -123,6 +142,8 @@ const LuxeEstate = () => {
       </section>
 
       {/* Product Sections */}
+      {loading && <p>Loading products...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       {Object.keys(products).map((category) => (
         <section key={category} className="product-section">
           <h2>{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
@@ -135,7 +156,7 @@ const LuxeEstate = () => {
                 </div>
                 <div className="luxury-product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">⭐⭐⭐⭐⭐</p>
+                  <p className="luxury-rating">⭐⭐⭐⭐⭐⭐⭐</p>
                   <p className="luxury-price">
                     {currency} {product.price}
                   </p>
