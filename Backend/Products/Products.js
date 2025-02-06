@@ -20,7 +20,7 @@ async function main() {
     // Middleware to validate email
     const validateEmail = (email) => {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
+      return re.test(String(email));
     };
 
     // Middleware to validate product data

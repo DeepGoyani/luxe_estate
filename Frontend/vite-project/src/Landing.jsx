@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Landing.css';
 
@@ -20,7 +20,7 @@ const LuxeEstate = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const categories = ['men', 'women', 'tshirt', 'shirt', 'trousers'];
+        const categories = ['men', 'women', 'tshirts', 'shirts', 'trousers'];
         const responses = await Promise.all(
           categories.map((category) => axios.get(`${API_URL}/${category}`))
         );
@@ -73,8 +73,12 @@ const LuxeEstate = () => {
     }
   }, []);
 
+  const handleVideoError = (e) => {
+    setError('Failed to load video');
+  };
+
   return (
-    <div className="container">
+    <div className="">
       <header className="header">
         <h1 className='le'>The Luxe Estate</h1>
       </header>
@@ -126,11 +130,8 @@ const LuxeEstate = () => {
 
       {/* Hero Section */}
       <section className="hero-section">
-        <video autoPlay loop muted playsInline className="hero-video">
-          <source
-            src="https://old-money.com/cdn/shop/videos/c/vp/fd726fc6578a4ba48c24cdd4d2c94cb3/fd726fc6578a4ba48c24cdd4d2c94cb3.HD-720p-4.5Mbps-35961835.mp4?v=0"
-            type="video/mp4"
-          />
+        <video autoPlay loop muted playsInline className="hero-video" onError={handleVideoError}>
+          <source src="https://old-money.com/cdn/shop/videos/c/vp/fd726fc6578a4ba48c24cdd4d2c9cb3/fd726fc6578a4ba48c24cdd4d2c9cb3.HD-720p-4.5Mbps-35961834.mp4.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="hero-overlay">
@@ -141,12 +142,19 @@ const LuxeEstate = () => {
         </div>
       </section>
 
+      <section className="product-section">
+        <h2 className="collection-title">Our Aim</h2>
+        <p>
+          At The Luxe Estate, our aim is to provide you with timeless, high-quality attire that embodies elegance and sophistication. We are dedicated to delivering clothing that not only looks exceptional but makes you feel confident and effortlessly stylish.
+        </p>
+      </section>
+
       {/* Product Sections */}
       {loading && <p>Loading products...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {Object.keys(products).map((category) => (
         <section key={category} className="product-section">
-          <h2>{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
+          <h2 className="collection-title">{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
           <div className="product-grid">
             {products[category]?.map((product) => (
               <div key={product._id} className="luxury-product-card">
@@ -156,7 +164,7 @@ const LuxeEstate = () => {
                 </div>
                 <div className="luxury-product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">⭐⭐⭐⭐⭐⭐⭐</p>
+                  <p className="luxury-rating">⭐⭐⭐⭐⭐⭐</p>
                   <p className="luxury-price">
                     {currency} {product.price}
                   </p>
