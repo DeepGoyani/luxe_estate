@@ -1,106 +1,97 @@
-import  { useState, useEffect } from "react";
-import axios from "axios";
-import "./Cart.css";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import './Cart.css';
 
-function Cart() {
+const API_URL = 'http://localhost:3000/api';
+
+const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/cart`);
+        setCartItems(response.data.items || []);
+      } catch (err) {
+        setError('Failed to load cart');
+        setCartItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchCart();
   }, []);
 
-  const fetchCart = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/cart");
-      console.log("Cart API Response:", response.data); // Debugging log
-      setCartItems(response.data);
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-    }
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
-
-  const handleAddToCart = async (product) => {
-    try {
-      await axios.post("http://localhost:5000/cart/add", {
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-      });
-      fetchCart();
-    } catch (error) {
-      console.error("Error adding product to cart:", error);
-    }
-  };
-
-  const handleQuantityChange = async (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-    try {
-      await axios.put(`http://localhost:5000/cart/update/${itemId}`, {
-        quantity: newQuantity,
-      });
-      fetchCart();
-    } catch (error) {
-      console.error("Error updating cart item:", error);
-    }
-  };
-
-  const handleRemoveItem = async (itemId) => {
-    try {
-      await axios.delete(`http://localhost:5000/cart/remove/${itemId}`);
-      fetchCart();
-    } catch (error) {
-      console.error("Error removing cart item:", error);
-    }
-  };
-
-  const handleClearCart = async () => {
-    try {
-      await axios.delete("http://localhost:5000/cart/clear");
-      fetchCart();
-    } catch (error) {
-      console.error("Error clearing cart:", error);
-    }
-  };
-
-  // Ensure price and quantity exist before using toLocaleString()
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
-    0
-  );
 
   return (
-    <div className="cart-container">
-      <h1>Your Shopping Cart</h1>
-      <div className="cart-items">
-        {cartItems.length === 0 ? (
-          <p>Your cart is empty</p>
-        ) : (
-          cartItems.map((item) => (
-            <div key={item._id} className="cart-item">
-              <h2>{item.name}</h2>
-              <p>Price: Rs. {item.price ? item.price.toLocaleString() : "N/A"}</p>
-              <div className="quantity-controls">
-                <button onClick={() => handleQuantityChange(item._id, (item.quantity || 1) - 1)}>
-                  -
-                </button>
-                <span>{item.quantity || 0}</span>
-                <button onClick={() => handleQuantityChange(item._id, (item.quantity || 0) + 1)}>
-                  +
-                </button>
-              </div>
-              <p>Subtotal: Rs. {item.price && item.quantity ? (item.price * item.quantity).toLocaleString() : "N/A"}</p>
-              <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
+    <div>
+      <header className="header">
+        <h1 className="le">The Luxe Estate</h1>
+      </header>
+
+      <div className="cart-container">
+        <h2>Your Shopping Cart</h2>
+
+        {loading && <p>Loading cart...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {cartItems.length === 0 && !loading && <p>Your cart is empty.</p>}
+
+        {cartItems.map((item) => (
+          <div key={item._id} className="cart-item">
+            <img src={item.image || 'https://via.placeholder.com/100'} alt={item.name} />
+            <div className="cart-info">
+              <h3>{item.name}</h3>
+              <p>Price: ${item.price}</p>
+              <p>Quantity: {item.quantity}</p>
             </div>
-          ))
+          </div>
+        ))}
+
+        {cartItems.length > 0 && (
+          <div className="cart-summary">
+            <h3>Total: ${calculateTotal().toFixed(2)}</h3>
+            <button className="checkout-btn">Proceed to Checkout</button>
+          </div>
         )}
       </div>
-
-      <div className="cart-summary">
-        <h2>Cart Total: Rs. {subtotal ? subtotal.toLocaleString() : "0"}</h2>
-        <button onClick={handleClearCart}>Clear Cart</button>
-      </div>
+      <footer className="footer">
+        <div className="footer-columns">
+          <h3>The Luxe Estate</h3>
+          <p>Kedar Business Hub Katargam Ved Road Surat Gujarat</p>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/shop">Shop</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+          </ul>
+        </div>
+        <div className="footer-columns">
+          <h4>Links</h4>
+          <ul>
+            <li><Link to="/payment-options">Payment Options</Link></li>
+            <li><Link to="/returns">Returns</Link></li>
+            <li><Link to="/privacy-policies">Privacy Policies</Link></li>
+          </ul>
+        </div>
+        <div className="footer-columns">
+          <h4>Newsletter</h4>
+          <form>
+            <input type="email" placeholder="Enter Your Email Address" required />
+            <button type="submit">SUBSCRIBE</button>
+          </form>
+        </div>
+        <div className="copyright">
+          <p>2023 The Luxe Estate. All rights reserved</p>
+        </div>
+      </footer>
     </div>
   );
-}
+};
+
 export default Cart;
