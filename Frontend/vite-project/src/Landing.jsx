@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Landing.css';
+import { Link } from 'react-router-dom';
+import './Landing.css'; // Ensure you have a Landing.css for styling
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -42,7 +42,7 @@ const LuxeEstate = () => {
     const fetchCart = async () => {
       try {
         const response = await axios.get(`${API_URL}/cart`);
-        setCart(response.data.items);
+        setCart(response.data.items || []);
       } catch (err) {
         console.error('Error fetching cart:', err);
       }
@@ -68,16 +68,19 @@ const LuxeEstate = () => {
     }
   };
 
-  const addToCart = async (productId) => {
+  const addToCart = async (productId, categoryId, quantity) => {
     try {
-      await axios.post(`${API_URL}/cart`, { productId, quantity: 1 });
+      await axios.post(`${API_URL}/cart`, { productId, quantity, categoryId });
       const response = await axios.get(`${API_URL}/cart`);
-      setCart(response.data.items);
+      setCart(response.data.items || []);
       alert('Item added to cart');
     } catch (err) {
+      console.error('Error adding to cart:', err);
       alert('Failed to add item to cart');
     }
   };
+
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('subscriberEmail');
@@ -87,13 +90,11 @@ const LuxeEstate = () => {
   }, []);
 
   return (
-    <div>
-      {/* Header */}
+    <div className="main">
       <header className="header">
         <h1 className="le">The Luxe Estate</h1>
       </header>
 
-      {/* Navbar */}
       <nav className="navbar">
         <div className="nav-links">
           <button className="nav-btn">Shop Men</button>
@@ -102,7 +103,6 @@ const LuxeEstate = () => {
         </div>
 
         <div className="nav-controls">
-          {/* Currency Dropdown */}
           <div className="dropdown">
             <button onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}>
               {currency} ▼
@@ -118,7 +118,6 @@ const LuxeEstate = () => {
             )}
           </div>
 
-          {/* Language Dropdown */}
           <div className="dropdown">
             <button onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}>
               {language} ▼
@@ -138,7 +137,22 @@ const LuxeEstate = () => {
         </div>
       </nav>
 
-      {/* Product Sections */}
+      <section className="hero-section">
+        <video autoPlay loop muted playsInline className="hero-video">
+          <source
+            src="https://old-money.com/cdn/shop/videos/c/vp/fd726fc6578a4ba48c24cdd4d2c94cb3/fd726fc6578a4ba48c24cdd4d2c94cb3.HD-720p-4.5Mbps-35961835.mp4"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+        <div className="hero-overlay">
+          <h2>{language === "Hindi" ? "लक्ज़री हमसे शुरू होती है" : "Luxury Starts and Ends With Us"}</h2>
+          <button className="shop-btn">
+            {language === "Hindi" ? "विशेष उत्पाद खरीदें" : "Shop Exclusive Products"}
+          </button>
+        </div>
+      </section>
+
       {loading && <p>Loading products...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {Object.keys(products).map((category) => (
@@ -148,18 +162,30 @@ const LuxeEstate = () => {
             {products[category]?.map((product) => (
               <div key={product._id} className="luxury-product-card">
                 <div className="luxury-product-image">
-                  <img src={product.image || "https://via.placeholder.com/150"} alt={product.name} />
+                  <img src={product.image || 'https://via.placeholder.com/150'} alt={product.name} />
                   {product.sale && <span className="sale-tag">Sale</span>}
                 </div>
                 <div className="luxury-product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">⭐⭐⭐⭐⭐</p>
+                  <p className="luxury-rating">{Array.from({ length: Math.floor(product.rating) }, (_, i) => (i + 1)).map((_, i) => <span key={i}>⭐</span>)}</p>
                   <p className="luxury-price">
                     {currency} {product.price}
                   </p>
-                  <button className="luxury-add-to-cart" onClick={() => addToCart(product._id)}>
-                    Add to Cart
-                  </button>
+                  <div className="quantity-selector">
+                    <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
+                    <select
+                      id={`quantity-${product._id}`}
+                      defaultValue="1"
+                      onChange={(e) => setQuantity(parseInt(e.target.value))}
+                    >
+                      {[...Array(10).keys()].map(number => (
+                        <option key={number} value={number + 1}>{number + 1}</option>
+                      ))}
+                    </select>
+                    <button className="add-to-cart" onClick={() => addToCart(product._id.toString(), category, quantity)}>
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -168,7 +194,6 @@ const LuxeEstate = () => {
         </section>
       ))}
 
-      {/* Footer */}
       <footer className="footer">
         <div className="footer-columns">
           <h3>The Luxe Estate</h3>
@@ -187,6 +212,10 @@ const LuxeEstate = () => {
             <li><Link to="/returns">Returns</Link></li>
             <li><Link to="/privacy-policies">Privacy Policies</Link></li>
           </ul>
+        </div>
+        <div className="footer-columns">
+          <h4>Help</h4>
+          {/* Add your help links here */}
         </div>
         <div className="footer-columns">
           <h4>Newsletter</h4>

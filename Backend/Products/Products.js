@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
@@ -17,20 +17,14 @@ async function main() {
     console.log("Connected to MongoDB successfully");
     const db = client.db("LandingPage");
 
-   // Middleware to validate email
-   const validateEmail = (email) => {
-     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-     return re.test(String(email));
-   };
+    // Middleware to validate email
+    const validateEmail = (email) => {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(String(email));
+    };
 
-   // Middleware to validate product data
-   const validateProductData = (data) => {
-     return data.productId && typeof data.productId === 'string' &&
-           data.quantity && typeof data.quantity === 'number' && data.quantity > 0;
-   };
-
-   // Route to fetch products by category
-   app.get('/api/:category', async (req, res) => {
+    // Route to fetch products by category
+    app.get('/api/:category', async (req, res) => {
       const category = req.params.category;
       try {
         const products = await db.collection(category).find().toArray();
@@ -40,8 +34,8 @@ async function main() {
       }
     });
 
-   // Route for newsletter subscription
-   app.post('/api/subscribers', async (req, res) => {
+    // Route for newsletter subscription
+    app.post('/api/subscribers', async (req, res) => {
       const { email } = req.body;
       if (!email || !validateEmail(email)) {
         return res.status(400).json({ error: "Invalid email address" });
@@ -54,28 +48,53 @@ async function main() {
       }
     });
 
-   // Route to manage cart
-   app.post('/api/cart', async (req, res) => {
+    // Route to add item to cart (with full product details)
+    app.post('/api/cart', async (req, res) => {
       const { productId, quantity } = req.body;
-      if (!validateProductData(req.body)) {
-        return res.status(400).json({ error: "Invalid product ID or quantity" });
-      }
+      const cartCollection = db.collection('cart');
+
       try {
-        const cartCollection = db.collection('cart');
+        // Fetch full product details
+        const product = await db.collection("products").findOne({ _id: new ObjectId(productId) });
+
+        if (!product) {
+          return res.status(404).json({ error: "Product not found" });
+        }
+
         const existingItem = await cartCollection.findOne({ productId });
+
         if (existingItem) {
           await cartCollection.updateOne({ productId }, { $inc: { quantity: quantity } });
         } else {
-          await cartCollection.insertOne({ productId, quantity });
+          const cartItem = {
+            productId,
+            quantity,
+            name: product.name,
+            image: product.image,
+            price: product.price,
+            rating: product.rating
+          };
+          await cartCollection.insertOne(cartItem);
         }
+
         res.json({ message: "Item added to cart successfully" });
       } catch (err) {
         res.status(500).json({ error: "Error adding item to cart" });
       }
     });
 
-   // Route to delete item from cart
-   app.delete('/api/cart/:itemId', async (req, res) => {
+    // Route to get cart items
+    app.get('/api/cart', async (req, res) => {
+      try {
+        const cartItems = await db.collection('cart').find().toArray();
+        res.json({ items: cartItems });
+      } catch {
+        res.status(500).json({ error: "Error fetching cart items" });
+      }
+    });
+
+    // Route to delete item from cart
+    app.delete('/api/cart/:itemId', async (req, res) => {
       const itemId = req.params.itemId;
       try {
         await db.collection('cart').deleteOne({ productId: itemId });
@@ -85,8 +104,8 @@ async function main() {
       }
     });
 
-   // Route to update quantity in cart
-   app.patch('/api/cart/:itemId', async (req, res) => {
+    // Route to update quantity in cart
+    app.patch('/api/cart/:itemId', async (req, res) => {
       const itemId = req.params.itemId;
       const { quantity } = req.body;
       try {
@@ -97,22 +116,25 @@ async function main() {
       }
     });
 
-   // Route to get cart items
-   app.get('/api/cart', async (req, res) => {
+    // Route to fetch product details by category and ID
+    app.get('/api/:category/:productId', async (req, res) => {
+      const { category, productId } = req.params;
       try {
-        const cartItems = await db.collection('cart').find().toArray();
-        const total = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
-        res.json({ items: cartItems, total });
+        const product = await db.collection(category).findOne({ _id: new ObjectId(productId) });
+        if (!product) {
+          return res.status(404).json({ error: "Product not found" });
+        }
+        res.json(product);
       } catch (err) {
-        res.status(500).json({ error: "Error fetching cart items" });
+        res.status(500).json({ error: "Error fetching product" });
       }
     });
 
-   // Start the server
-   app.listen(PORT, () => {
-     console.log(`Server is running on http://localhost:${PORT}`);
-   });
- } catch (err) {
+    // Start the server
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
     console.error(err.stack);
     process.exit(1);
   }

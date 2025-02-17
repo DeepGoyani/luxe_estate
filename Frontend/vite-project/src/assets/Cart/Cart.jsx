@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Cart.css';
+import { Link } from 'react-router-dom';
+import './Cart.css'; // Make sure you have a Cart.css file for styling
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -9,57 +9,100 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingItemId, setEditingItemId] = useState(null);
 
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/cart`);
-        setCartItems(response.data.items || []);
-      } catch (err) {
-        setError('Failed to load cart');
-        setCartItems([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCart();
   }, []);
 
+  const fetchCart = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/cart`);
+      setCartItems(response.data.items || []);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching cart:', err);
+      setError("Failed to load cart. Please try again.");
+      setCartItems([]);
+      setLoading(false);
+    }
+  };
+
+  const removeFromCart = async (itemId) => {
+    try {
+      await axios.delete(`${API_URL}/cart/${itemId}`);
+      await fetchCart();
+    } catch (err) {
+      console.error("Error removing item:", err);
+    }
+  };
+
+  const updateQuantity = async (itemId, quantity) => {
+    try {
+      await axios.patch(`${API_URL}/cart/${itemId}`, { quantity });
+      await fetchCart();
+      setEditingItemId(null); // Close the edit form
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+      alert("Failed to update quantity");
+    }
+  };
+
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => total + item.productDetails.price * item.quantity, 0);
   };
 
   return (
-    <div>
+    <div className="cart-container">
       <header className="header">
         <h1 className="le">The Luxe Estate</h1>
       </header>
 
-      <div className="cart-container">
+      <div className="cart-items">
         <h2>Your Shopping Cart</h2>
-
-        {loading && <p>Loading cart...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {cartItems.length === 0 && !loading && <p>Your cart is empty.</p>}
-
-        {cartItems.map((item) => (
-          <div key={item._id} className="cart-item">
-            <img src={item.image || 'https://via.placeholder.com/100'} alt={item.name} />
-            <div className="cart-info">
-              <h3>{item.name}</h3>
-              <p>Price: ${item.price}</p>
-              <p>Quantity: {item.quantity}</p>
-            </div>
-          </div>
-        ))}
-
-        {cartItems.length > 0 && (
-          <div className="cart-summary">
-            <h3>Total: ${calculateTotal().toFixed(2)}</h3>
-            <button className="checkout-btn">Proceed to Checkout</button>
-          </div>
+        {loading ? (
+          <p>Loading cart...</p>
+        ) : (
+          <>
+            {error && <p className="error-message">{error}</p>}
+            {cartItems.length === 0 ? (
+              <p>Your cart is empty.</p>
+            ) : (
+              <>
+                {cartItems.map((item) => (
+                  <div key={item.productId} className="cart-item">
+                    <img src={item.productDetails.image || 'https://via.placeholder.com/150'} alt={item.productDetails.name} />
+                    <div className="cart-info">
+                      <h3>Name: {item.productDetails.name}</h3>
+                      <p>Price: ${item.productDetails.price}</p>
+                      <div className="quantity-control">
+                        <span>{item.quantity}</span>
+                        <button onClick={() => setEditingItemId(item.productId)}>Edit</button>
+                        {editingItemId === item.productId && (
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) => updateQuantity(item.productId, e.target.value)}
+                          />
+                        )}
+                      </div>
+                      <button className="remove-btn" onClick={() => removeFromCart(item.productId)}>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <div className="cart-summary">
+                  <h3>Total: ${calculateTotal().toFixed(2)}</h3>
+                  <button className="checkout-btn">Proceed to Checkout</button>
+                </div>
+              </>
+            )}
+          </>
         )}
       </div>
+
       <footer className="footer">
         <div className="footer-columns">
           <h3>The Luxe Estate</h3>
