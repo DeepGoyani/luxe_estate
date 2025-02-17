@@ -17,20 +17,20 @@ async function main() {
     console.log("Connected to MongoDB successfully");
     const db = client.db("LandingPage");
 
-    // Middleware to validate email
-    const validateEmail = (email) => {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(String(email));
-    };
+   // Middleware to validate email
+   const validateEmail = (email) => {
+     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+     return re.test(String(email));
+   };
 
-    // Middleware to validate product data
-    const validateProductData = (data) => {
-      return data.productId && typeof data.productId === 'string' &&
-             data.quantity && typeof data.quantity === 'number' && data.quantity > 0;
-    };
+   // Middleware to validate product data
+   const validateProductData = (data) => {
+     return data.productId && typeof data.productId === 'string' &&
+           data.quantity && typeof data.quantity === 'number' && data.quantity > 0;
+   };
 
-    // Route to fetch products by category
-    app.get('/api/:category', async (req, res) => {
+   // Route to fetch products by category
+   app.get('/api/:category', async (req, res) => {
       const category = req.params.category;
       try {
         const products = await db.collection(category).find().toArray();
@@ -40,8 +40,8 @@ async function main() {
       }
     });
 
-    // Route for newsletter subscription
-    app.post('/api/subscribers', async (req, res) => {
+   // Route for newsletter subscription
+   app.post('/api/subscribers', async (req, res) => {
       const { email } = req.body;
       if (!email || !validateEmail(email)) {
         return res.status(400).json({ error: "Invalid email address" });
@@ -54,25 +54,65 @@ async function main() {
       }
     });
 
-    // Route to manage cart
-    app.post('/api/cart', async (req, res) => {
+   // Route to manage cart
+   app.post('/api/cart', async (req, res) => {
       const { productId, quantity } = req.body;
       if (!validateProductData(req.body)) {
         return res.status(400).json({ error: "Invalid product ID or quantity" });
       }
       try {
-        await db.collection('cart').insertOne({ productId, quantity });
+        const cartCollection = db.collection('cart');
+        const existingItem = await cartCollection.findOne({ productId });
+        if (existingItem) {
+          await cartCollection.updateOne({ productId }, { $inc: { quantity: quantity } });
+        } else {
+          await cartCollection.insertOne({ productId, quantity });
+        }
         res.json({ message: "Item added to cart successfully" });
       } catch (err) {
         res.status(500).json({ error: "Error adding item to cart" });
       }
     });
 
-    // Start the server
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+   // Route to delete item from cart
+   app.delete('/api/cart/:itemId', async (req, res) => {
+      const itemId = req.params.itemId;
+      try {
+        await db.collection('cart').deleteOne({ productId: itemId });
+        res.json({ message: "Item removed from cart successfully" });
+      } catch (err) {
+        res.status(500).json({ error: "Error removing item from cart" });
+      }
     });
-  } catch (err) {
+
+   // Route to update quantity in cart
+   app.patch('/api/cart/:itemId', async (req, res) => {
+      const itemId = req.params.itemId;
+      const { quantity } = req.body;
+      try {
+        await db.collection('cart').updateOne({ productId: itemId }, { $set: { quantity } });
+        res.json({ message: "Quantity updated successfully" });
+      } catch (err) {
+        res.status(500).json({ error: "Error updating quantity" });
+      }
+    });
+
+   // Route to get cart items
+   app.get('/api/cart', async (req, res) => {
+      try {
+        const cartItems = await db.collection('cart').find().toArray();
+        const total = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+        res.json({ items: cartItems, total });
+      } catch (err) {
+        res.status(500).json({ error: "Error fetching cart items" });
+      }
+    });
+
+   // Start the server
+   app.listen(PORT, () => {
+     console.log(`Server is running on http://localhost:${PORT}`);
+   });
+ } catch (err) {
     console.error(err.stack);
     process.exit(1);
   }

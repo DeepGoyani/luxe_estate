@@ -1,4 +1,5 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Landing.css';
 
@@ -7,6 +8,7 @@ const API_URL = 'http://localhost:3000/api';
 const LuxeEstate = () => {
   const [email, setEmail] = useState('');
   const [products, setProducts] = useState({});
+  const [cart, setCart] = useState([]);
   const [currency, setCurrency] = useState('USD');
   const [language, setLanguage] = useState('English');
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
@@ -36,7 +38,18 @@ const LuxeEstate = () => {
         setLoading(false);
       }
     };
+
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/cart`);
+        setCart(response.data.items);
+      } catch (err) {
+        console.error('Error fetching cart:', err);
+      }
+    };
+
     fetchProducts();
+    fetchCart();
   }, []);
 
   const handleNewsletterSubmit = async (e) => {
@@ -46,7 +59,6 @@ const LuxeEstate = () => {
       return;
     }
     try {
-      // Save email to localStorage
       localStorage.setItem('subscriberEmail', email);
       await axios.post(`${API_URL}/subscribers`, { email });
       alert('Subscribed successfully!');
@@ -59,13 +71,14 @@ const LuxeEstate = () => {
   const addToCart = async (productId) => {
     try {
       await axios.post(`${API_URL}/cart`, { productId, quantity: 1 });
+      const response = await axios.get(`${API_URL}/cart`);
+      setCart(response.data.items);
       alert('Item added to cart');
     } catch (err) {
       alert('Failed to add item to cart');
     }
   };
 
-  // Retrieve saved email from localStorage
   useEffect(() => {
     const savedEmail = localStorage.getItem('subscriberEmail');
     if (savedEmail) {
@@ -73,14 +86,11 @@ const LuxeEstate = () => {
     }
   }, []);
 
-  const handleVideoError = (e) => {
-    setError('Failed to load video');
-  };
-
   return (
-    <div className="">
+    <div>
+      {/* Header */}
       <header className="header">
-        <h1 className='le'>The Luxe Estate</h1>
+        <h1 className="le">The Luxe Estate</h1>
       </header>
 
       {/* Navbar */}
@@ -124,30 +134,9 @@ const LuxeEstate = () => {
             )}
           </div>
 
-          <button className="cart-btn">🛒</button>
+          <Link to="/cart" className="cart-btn">🛒 ({cart.length})</Link>
         </div>
       </nav>
-
-      {/* Hero Section */}
-      <section className="hero-section">
-        <video autoPlay loop muted playsInline className="hero-video" onError={handleVideoError}>
-          <source src="https://old-money.com/cdn/shop/videos/c/vp/fd726fc6578a4ba48c24cdd4d2c9cb3/fd726fc6578a4ba48c24cdd4d2c9cb3.HD-720p-4.5Mbps-35961834.mp4.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="hero-overlay">
-          <h2>{language === "Hindi" ? "लक्ज़री हमसे शुरू होती है" : "Luxury Starts and Ends With Us"}</h2>
-          <button className="shop-btn">
-            {language === "Hindi" ? "विशेष उत्पाद खरीदें" : "Shop Exclusive Products"}
-          </button>
-        </div>
-      </section>
-
-      <section className="product-section">
-        <h2 className="collection-title">Our Aim</h2>
-        <p>
-          At The Luxe Estate, our aim is to provide you with timeless, high-quality attire that embodies elegance and sophistication. We are dedicated to delivering clothing that not only looks exceptional but makes you feel confident and effortlessly stylish.
-        </p>
-      </section>
 
       {/* Product Sections */}
       {loading && <p>Loading products...</p>}
@@ -164,7 +153,7 @@ const LuxeEstate = () => {
                 </div>
                 <div className="luxury-product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">⭐⭐⭐⭐⭐⭐</p>
+                  <p className="luxury-rating">⭐⭐⭐⭐⭐</p>
                   <p className="luxury-price">
                     {currency} {product.price}
                   </p>
@@ -185,23 +174,19 @@ const LuxeEstate = () => {
           <h3>The Luxe Estate</h3>
           <p>Kedar Business Hub Katargam Ved Road Surat Gujarat</p>
           <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Shop</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/shop">Shop</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
           </ul>
         </div>
         <div className="footer-columns">
           <h4>Links</h4>
           <ul>
-            <li><a href="#">Payment Options</a></li>
-            <li><a href="#">Returns</a></li>
-            <li><a href="#">Privacy Policies</a></li>
+            <li><Link to="/payment-options">Payment Options</Link></li>
+            <li><Link to="/returns">Returns</Link></li>
+            <li><Link to="/privacy-policies">Privacy Policies</Link></li>
           </ul>
-        </div>
-        <div className="footer-columns">
-          <h4>Help</h4>
-          {/* Add your help links here */}
         </div>
         <div className="footer-columns">
           <h4>Newsletter</h4>
