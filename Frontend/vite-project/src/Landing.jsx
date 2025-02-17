@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './Landing.css'; // Make sure you have a Landing.css file for styling
+import './Landing.css'; // Ensure you have a Landing.css for styling
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -79,6 +79,8 @@ const LuxeEstate = () => {
       alert('Failed to add item to cart');
     }
   };
+
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('subscriberEmail');
@@ -170,16 +172,17 @@ const LuxeEstate = () => {
                     {currency} {product.price}
                   </p>
                   <div className="quantity-selector">
-                    <label htmlFor="quantity">Quantity:</label>
+                    <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
                     <select
-                      id="quantity"
+                      id={`quantity-${product._id}`}
                       defaultValue="1"
+                      onChange={(e) => setQuantity(parseInt(e.target.value))}
                     >
                       {[...Array(10).keys()].map(number => (
                         <option key={number} value={number + 1}>{number + 1}</option>
                       ))}
                     </select>
-                    <button className="add-to-cart" onClick={() => addToCart(product._id.toString(), category, parseInt(document.getElementById('quantity').value, 10))}>
+                    <button className="add-to-cart" onClick={() => addToCart(product._id.toString(), category, quantity)}>
                       Add to Cart
                     </button>
                   </div>
