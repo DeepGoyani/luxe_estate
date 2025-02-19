@@ -1,20 +1,18 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types'; // Import PropTypes
-import './Landing.css'; // Ensure the path is correct based on your project structure
 
-const HeaderNavbar = ({ currency, setCurrency, language, setLanguage, cart, addToCart }) => {
+const HeaderNavbar = ({ cart = [] }) => {
+  const [currency, setCurrency] = useState('USD');
+  const [language, setLanguage] = useState('English');
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+
   const currencies = ['INR', 'USD', 'EUR', 'GBP', 'JPY'];
   const languages = ['English', 'Hindi', 'Spanish', 'French', 'German'];
 
   return (
-    <div className="header-navbar">
-      <header className="header">
-        <h1 className="le">The Luxe Estate</h1>
-      </header>
-
+    <header>
+      <h1 className="le">The Luxe Estate</h1>
       <nav className="navbar">
         <div className="nav-links">
           <button className="nav-btn">Shop Men</button>
@@ -56,16 +54,8 @@ const HeaderNavbar = ({ currency, setCurrency, language, setLanguage, cart, addT
           <Link to="/cart" className="cart-btn">🛒 ({cart.length})</Link>
         </div>
       </nav>
-    </div>
+    </header>
   );
 };
-HeaderNavbar.propTypes = {
-    currency: PropTypes.string.isRequired,
-    setCurrency: PropTypes.func.isRequired,
-    language: PropTypes.string.isRequired,
-    setLanguage: PropTypes.func.isRequired,
-    cart: PropTypes.array.isRequired,
-    addToCart: PropTypes.func.isRequired,
-  };
-  
-  export default HeaderNavbar;
+
+export default HeaderNavbar;

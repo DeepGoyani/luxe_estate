@@ -1,78 +1,56 @@
-import  { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import HeaderNavbar from './HeaderNavbar';
-import Footer from './Footer';
-import './Landing.css'; // Ensure the path is correct based on your project structure
 
 const API_URL = 'http://localhost:3000/api';
 
-const MainComponent = () => {
+const MainContent = ({ addToCart = () => {} }) => {
   const [products, setProducts] = useState({});
-  const [cart, setCart] = useState([]);
-  const [currency, setCurrency] = useState('USD');
-  const [language, setLanguage] = useState('English');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Define quantity state and its setter
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProducts = async () => {
-     try {
-       const categories = ['men', 'women', 'tshirts', 'shirts', 'trousers'];
-       const responses = await Promise.all(
-         categories.map((category) => axios.get(`${API_URL}/${category}`))
-       );
-       const data = responses.reduce((acc, res, index) => {
-         acc[categories[index]] = res.data;
-         return acc;
-       }, {});
-       setProducts(data);
-       setLoading(false);
-     } catch (err) {
-       console.error('Error fetching products:', err);
-       setError('Failed to load products');
-       setLoading(false);
+      try {
+        const categories = ['men', 'women', 'tshirts', 'shirts', 'trousers'];
+        const responses = await Promise.all(
+          categories.map((category) => axios.get(`${API_URL}/${category}`))
+        );
+        const data = responses.reduce((acc, res, index) => {
+          acc[categories[index]] = res.data;
+          return acc;
+        }, {});
+        setProducts(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products');
+        setLoading(false);
       }
     };
 
-    const fetchCart = async () => {
-     try {
-       const response = await axios.get(`${API_URL}/cart`);
-       setCart(response.data.items || []);
-     } catch (err) {
-       console.error('Error fetching cart:', err);
-    }
-   };
-
     fetchProducts();
-    fetchCart();
   }, []);
 
-  const addToCart = async (productId, categoryId, quantity) => {
-    try {
-      await axios.post(`${API_URL}/cart`, { productId, quantity, categoryId });
-      const response = await axios.get(`${API_URL}/cart`);
-      setCart(response.data.items || []);
-      alert('Item added to cart');
-   } catch (err) {
-      console.error('Error adding to cart:', err);
-      alert('Failed to add item to cart');
-    }
-  };
-
   return (
-    <div className="main">
-      <HeaderNavbar
-        currency={currency}
-        setCurrency={setCurrency}
-        language={language}
-        setLanguage={setLanguage}
-        cart={cart}
-        addToCart={addToCart}
-      />
+    <main>
+      <section className="hero-section">
+        <video autoPlay loop muted playsInline className="hero-video">
+          <source
+            src="https://old-money.com/cdn/shop/videos/c/vp/fd726fc6578a4ba48c24cdd4d2c94cb3/fd726fc6578a4ba48c24cdd4d2c94cb3.HD-720p-4.5Mbps-35961835.mp4"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+        <div className="hero-overlay">
+          <h2>Luxury Starts and Ends With Us</h2>
+          <button className="shop-btn">Shop Exclusive Products</button>
+        </div>
+      </section>
+
       {loading && <p>Loading products...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
+
       {Object.keys(products).map((category) => (
         <section key={category} className="product-section">
           <h2 className="collection-title">{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
@@ -85,10 +63,8 @@ const MainComponent = () => {
                 </div>
                 <div className="luxury-product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">{Array.from({ length: Math.floor(product.rating) }, (_, i) => (i + 1)).map((_, i) => <span key={i}>⭐</span>)}</p>
-                  <p className="luxury-price">
-                    {currency} {product.price}
-                  </p>
+                  <p className="luxury-rating">{Array.from({ length: Math.floor(product.rating) }, (_, i) => <span key={i}>⭐</span>)}</p>
+                  <p className="luxury-price">USD {product.price}</p>
                   <div className="quantity-selector">
                     <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
                     <select
@@ -108,12 +84,10 @@ const MainComponent = () => {
               </div>
             ))}
           </div>
-          <button className="show-all-btn">Show All</button>
         </section>
       ))}
-      <Footer />
-    </div>
+    </main>
   );
 };
 
-export default MainComponent;
+export default MainContent;
