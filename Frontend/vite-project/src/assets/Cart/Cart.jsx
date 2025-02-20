@@ -1,15 +1,10 @@
-import  { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import './Cart.css'; // Make sure you have a Cart.css file for styling
-
-const API_URL = 'http://localhost:3000/api';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingItemId, setEditingItemId] = useState(null);
 
   useEffect(() => {
     fetchCart();
@@ -17,122 +12,90 @@ const Cart = () => {
 
   const fetchCart = async () => {
     try {
-      const response = await axios.get(`${API_URL}/cart`);
-      setCartItems(response.data.items || []);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching cart:', err);
-      setError("Failed to load cart. Please try again.");
-      setCartItems([]);
+      const response = await axios.get("http://localhost:3000/api/cart");
+      setCartItems(response.data);
+    } catch (error) {
+      setError("Failed to fetch cart items");
+    } finally {
       setLoading(false);
     }
   };
 
-  const removeFromCart = async (itemId) => {
+  const updateQuantity = async (id, quantity) => {
+    if (quantity < 1) return;
     try {
-      await axios.delete(`${API_URL}/cart/${itemId}`);
-      await fetchCart();
-    } catch (err) {
-      console.error("Error removing item:", err);
+      await axios.put(`http://localhost:3000/api/cart/${id}`, { quantity });
+      fetchCart();
+    } catch (error) {
+      setError("Failed to update quantity");
     }
   };
 
-  const updateQuantity = async (itemId, quantity) => {
+  const removeItem = async (id) => {
     try {
-      await axios.patch(`${API_URL}/cart/${itemId}`, { quantity });
-      await fetchCart();
-      setEditingItemId(null); // Close the edit form
-    } catch (err) {
-      console.error("Error updating quantity:", err);
-      alert("Failed to update quantity");
+      await axios.delete(`http://localhost:3000/api/cart/${id}`);
+      fetchCart();
+    } catch (error) {
+      setError("Failed to remove item");
     }
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.productDetails.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
   };
 
   return (
-    <div className="cart-container">
-      <header className="header">
-        <h1 className="le">The Luxe Estate</h1>
-      </header>
+    <div className="p-6 max-w-3xl mx-auto bg-gray-50 min-h-screen">
+      <h2 className="text-2xl font-bold mb-6 text-center">🛒 Your Cart</h2>
 
-      <div className="cart-items">
-        <h2>Your Shopping Cart</h2>
-        {loading ? (
-          <p>Loading cart...</p>
-        ) : (
-          <>
-            {error && <p className="error-message">{error}</p>}
-            {cartItems.length === 0 ? (
-              <p>Your cart is empty.</p>
-            ) : (
-              <>
-                {cartItems.map((item) => (
-                  <div key={item.productId} className="cart-item">
-                    <img src={item.productDetails.image || 'https://via.placeholder.com/150'} alt={item.productDetails.name} />
-                    <div className="cart-info">
-                      <h3>Name: {item.productDetails.name}</h3>
-                      <p>Price: ${item.productDetails.price}</p>
-                      <div className="quantity-control">
-                        <span>{item.quantity}</span>
-                        <button onClick={() => setEditingItemId(item.productId)}>Edit</button>
-                        {editingItemId === item.productId && (
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) => updateQuantity(item.productId, e.target.value)}
-                          />
-                        )}
-                      </div>
-                      <button className="remove-btn" onClick={() => removeFromCart(item.productId)}>
-                        Remove
-                      </button>
-                    </div>
+      {loading && <p className="text-center">Loading...</p>}
+      {error && <p className="text-red-500 text-center">{error}</p>}
+
+      {cartItems.length > 0 ? (
+        <div>
+          <ul className="space-y-4">
+            {cartItems.map((item) => (
+              <li key={item.id} className="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg">{item.name}</h3>
+                  <p className="text-gray-600">Price: ${item.price.toFixed(2)}</p>
+                  <div className="flex items-center mt-2">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="bg-gray-200 px-3 py-1 rounded-md"
+                    >
+                      -
+                    </button>
+                    <span className="px-4">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="bg-gray-200 px-3 py-1 rounded-md"
+                    >
+                      +
+                    </button>
                   </div>
-                ))}
-                <div className="cart-summary">
-                  <h3>Total: ${calculateTotal().toFixed(2)}</h3>
-                  <button className="checkout-btn">Proceed to Checkout</button>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="text-red-500 mt-2 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
                 </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
+              </li>
+            ))}
+          </ul>
 
-      <footer className="footer">
-        <div className="footer-columns">
-          <h3>The Luxe Estate</h3>
-          <p>Kedar Business Hub Katargam Ved Road Surat Gujarat</p>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/shop">Shop</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
-          </ul>
+          <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold">Total: ${calculateTotal()}</h3>
+            <button className="w-full mt-4 bg-black text-white py-2 rounded-lg hover:bg-gray-900">
+              Proceed to Checkout
+            </button>
+          </div>
         </div>
-        <div className="footer-columns">
-          <h4>Links</h4>
-          <ul>
-            <li><Link to="/payment-options">Payment Options</Link></li>
-            <li><Link to="/returns">Returns</Link></li>
-            <li><Link to="/privacy-policies">Privacy Policies</Link></li>
-          </ul>
-        </div>
-        <div className="footer-columns">
-          <h4>Newsletter</h4>
-          <form>
-            <input type="email" placeholder="Enter Your Email Address" required />
-            <button type="submit">SUBSCRIBE</button>
-          </form>
-        </div>
-        <div className="copyright">
-          <p>2023 The Luxe Estate. All rights reserved</p>
-        </div>
-      </footer>
+      ) : (
+        <p className="text-center text-gray-500 text-lg">Your cart is empty 🛍️</p>
+      )}
     </div>
   );
 };

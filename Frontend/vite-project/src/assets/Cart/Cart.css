@@ -267,3 +267,28 @@ footer h4 {
   font-size: 0.875rem;
 }
 
+.cart-container {
+  padding: 20px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.cart-info {
+  margin-left: 15px;
+}
+
+.quantity-control input {
+  width: 50px;
+}
+
+.remove-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
