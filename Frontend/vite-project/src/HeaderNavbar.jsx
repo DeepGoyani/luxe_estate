@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './Landing.css'
 
 const HeaderNavbar = ({ cart = [] }) => {
   const [currency, setCurrency] = useState('USD');

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Landing.css'
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://luxe-estate-2.onrender.com/api';
 
 const MainContent = ({ addToCart = () => {} }) => {
   const [products, setProducts] = useState({});

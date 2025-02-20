@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
+import './Landing.css'
 const Footer = () => {
   const [email, setEmail] = useState('');
 
