@@ -1,19 +1,30 @@
-import { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import './Landing.css'
+import PropTypes from 'prop-types';
+import './Landing.css';
 
-const HeaderNavbar = ({ cart = [] }) => {
-  const [currency, setCurrency] = useState('USD');
-  const [language, setLanguage] = useState('English');
-  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-
+const HeaderNavbar = ({ currency, setCurrency, language, setLanguage, cart }) => {
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = React.useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = React.useState(false);
   const currencies = ['INR', 'USD', 'EUR', 'GBP', 'JPY'];
   const languages = ['English', 'Hindi', 'Spanish', 'French', 'German'];
 
+  const handleCurrencyChange = (e) => {
+    setShowCurrencyDropdown(!showCurrencyDropdown);
+    setCurrency(e.target.value);
+  };
+
+  const handleLanguageChange = (e) => {
+    setShowLanguageDropdown(!showLanguageDropdown);
+    setLanguage(e.target.value);
+  };
+
   return (
-    <header>
-      <h1 className="le">The Luxe Estate</h1>
+    <div className="header-navbar">
+      <header className="header">
+        <h1 className="le">The Luxe Estate</h1>
+      </header>
+
       <nav className="navbar">
         <div className="nav-links">
           <button className="nav-btn">Shop Men</button>
@@ -52,11 +63,24 @@ const HeaderNavbar = ({ cart = [] }) => {
             )}
           </div>
 
-          <Link to="/cart" className="cart-btn">🛒 ({cart.length})</Link>
+          <Link to="/cart" className="cart-btn">🛒 ({cart ? cart.length : 0})</Link>
         </div>
       </nav>
-    </header>
+    </div>
   );
+};
+
+HeaderNavbar.propTypes = {
+  currency: PropTypes.string,
+  setCurrency: PropTypes.func.isRequired,
+  language: PropTypes.string,
+  setLanguage: PropTypes.func.isRequired,
+  cart: PropTypes.array.isRequired,
+};
+
+HeaderNavbar.defaultProps = {
+  currency: 'INR',
+  language: 'English',
 };
 
 export default HeaderNavbar;

@@ -1,12 +1,14 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import CartProvider from './CartContext';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+root.render(
   <BrowserRouter>
-    <CartProvider>
+    
       <App />
-    </CartProvider>
+   
   </BrowserRouter>
 );

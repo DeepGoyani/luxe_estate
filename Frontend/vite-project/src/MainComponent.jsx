@@ -1,15 +1,71 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Landing.css'
+import HeaderNavbar from './HeaderNavbar';
+import Footer from './Footer';
+import './Landing.css';
 
-const API_URL = 'https://luxe-estate-2.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 
-const MainContent = ({ addToCart = () => {} }) => {
+const MainComponent = () => {
   const [products, setProducts] = useState({});
+  const [cart, setCart] = useState([]);
+  const [currency, setCurrency] = useState('USD');
+  const [conversionRates, setConversionRates] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
+  const addToCart = async (productId, category, quantity) => {
+    console.log('Adding to cart:', { productId, category, quantity }); // Debugging
+  
+    try {
+      const response = await axios.post(`${API_URL}/cart`, {
+        productId,
+        category, // Make sure category is being sent
+        quantity,
+      });
+  
+      console.log('Response from server:', response.data); // Debug log
+      const cartResponse = await axios.get(`${API_URL}/cart`);
+      setCart(cartResponse.data.items || []);
+      alert('Item added to cart');
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+      if (err.response && err.response.data) {
+        alert(`Failed to add item to cart: ${err.response.data.error}`);
+      } else {
+        alert('Failed to add item to cart');
+      }
+    }
+  };
+  
+  const handleAddToCart = async (product) => {
+    try {
+      console.log("Adding product:", product); // Debug log
+  
+      const response = await fetch("http://localhost:5000/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product._id,
+          category: product.category,  // Ensure this exists
+          quantity: 1,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("Cart response:", data); // Debug log
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to add item to cart");
+      }
+  
+      alert("Item added to cart successfully!");
+    } catch (error) {
+      console.error("Failed to add item to cart:", error.message);
+    }
+  };
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -30,11 +86,44 @@ const MainContent = ({ addToCart = () => {} }) => {
       }
     };
 
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/cart`);
+        setCart(response.data.items || []);
+      } catch (err) {
+        console.error('Error fetching cart:', err);
+      }
+    };
+
+    const fetchConversionRates = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/conversion-rates`);
+        setConversionRates(response.data);
+      } catch (err) {
+        console.error('Error fetching conversion rates:', err);
+      }
+    };
+
     fetchProducts();
+    fetchCart();
+    fetchConversionRates();
   }, []);
 
+  const convertPrice = (price, currency) => {
+    if (currency === 'USD') return price;
+    return (price * conversionRates[currency]).toFixed(2);
+  };
+
   return (
-    <main>
+    <div className="main">
+      <HeaderNavbar
+        currency={currency}
+        setCurrency={setCurrency}
+        cart={cart}
+        addToCart={addToCart}
+      />
+      {loading && <p>Loading products...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <section className="hero-section">
         <video autoPlay loop muted playsInline className="hero-video">
           <source
@@ -48,10 +137,6 @@ const MainContent = ({ addToCart = () => {} }) => {
           <button className="shop-btn">Shop Exclusive Products</button>
         </div>
       </section>
-
-      {loading && <p>Loading products...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
       {Object.keys(products).map((category) => (
         <section key={category} className="product-section">
           <h2 className="collection-title">{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
@@ -64,8 +149,10 @@ const MainContent = ({ addToCart = () => {} }) => {
                 </div>
                 <div className="luxury-product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">{Array.from({ length: Math.floor(product.rating) }, (_, i) => <span key={i}>⭐</span>)}</p>
-                  <p className="luxury-price">USD {product.price}</p>
+                  <p className="luxury-rating">{Array.from({ length: Math.floor(product.rating) }, (_, i) => (i + 1)).map((_, i) => <span key={i}>⭐</span>)}</p>
+                  <p className="luxury-price">
+                    {currency} {convertPrice(product.price, currency)}
+                  </p>
                   <div className="quantity-selector">
                     <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
                     <select
@@ -85,10 +172,12 @@ const MainContent = ({ addToCart = () => {} }) => {
               </div>
             ))}
           </div>
+          <button className="show-all-btn">Show All</button>
         </section>
       ))}
-    </main>
+      <Footer />
+    </div>
   );
 };
 
-export default MainContent;
+export default MainComponent;
