@@ -9,108 +9,70 @@ const API_URL = 'http://localhost:3000/api';
 const MainComponent = () => {
   const [products, setProducts] = useState({});
   const [cart, setCart] = useState([]);
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState('INR');
+  const [language, setLanguage] = useState('English');
   const [conversionRates, setConversionRates] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
   const addToCart = async (productId, category, quantity) => {
-    console.log('Adding to cart:', { productId, category, quantity }); // Debugging
-  
     try {
       const response = await axios.post(`${API_URL}/cart`, {
         productId,
-        category, // Make sure category is being sent
+        category,
         quantity,
       });
-  
-      console.log('Response from server:', response.data); // Debug log
-      const cartResponse = await axios.get(`${API_URL}/cart`);
-      setCart(cartResponse.data.items || []);
-      alert('Item added to cart');
+
+      if (response.data) {
+        const cartResponse = await axios.get(`${API_URL}/cart`);
+        setCart(cartResponse.data.items || []);
+        alert('Item added to cart successfully!');
+      }
     } catch (err) {
       console.error('Error adding to cart:', err);
-      if (err.response && err.response.data) {
-        alert(`Failed to add item to cart: ${err.response.data.error}`);
-      } else {
-        alert('Failed to add item to cart');
-      }
+      alert(err.response?.data?.error || 'Failed to add item to cart');
     }
   };
-  
-  const handleAddToCart = async (product) => {
-    try {
-      console.log("Adding product:", product); // Debug log
-  
-      const response = await fetch("http://localhost:5000/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productId: product._id,
-          category: product.category,  // Ensure this exists
-          quantity: 1,
-        }),
-      });
-  
-      const data = await response.json();
-      console.log("Cart response:", data); // Debug log
-  
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to add item to cart");
-      }
-  
-      alert("Item added to cart successfully!");
-    } catch (error) {
-      console.error("Failed to add item to cart:", error.message);
-    }
-  };
-  
+
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
         const categories = ['men', 'women', 'tshirts', 'shirts', 'trousers'];
-        const responses = await Promise.all(
-          categories.map((category) => axios.get(`${API_URL}/${category}`))
-        );
-        const data = responses.reduce((acc, res, index) => {
-          acc[categories[index]] = res.data;
+        
+        // Fetch all data in parallel
+        const [productsResponses, cartResponse, ratesResponse] = await Promise.all([
+          Promise.all(
+            categories.map(category => axios.get(`${API_URL}/${category}`))
+          ),
+          axios.get(`${API_URL}/cart`),
+          axios.get(`${API_URL}/conversion-rates`)
+        ]);
+
+        // Process products data
+        const productsData = productsResponses.reduce((acc, response, index) => {
+          acc[categories[index]] = response.data;
           return acc;
         }, {});
-        setProducts(data);
+
+        // Update all states
+        setProducts(productsData);
+        setCart(cartResponse.data.items || []);
+        setConversionRates(ratesResponse.data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to load products. Please try again later.');
+      } finally {
         setLoading(false);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load products');
-        setLoading(false);
       }
     };
 
-    const fetchCart = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/cart`);
-        setCart(response.data.items || []);
-      } catch (err) {
-        console.error('Error fetching cart:', err);
-      }
-    };
-
-    const fetchConversionRates = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/conversion-rates`);
-        setConversionRates(response.data);
-      } catch (err) {
-        console.error('Error fetching conversion rates:', err);
-      }
-    };
-
-    fetchProducts();
-    fetchCart();
-    fetchConversionRates();
+    fetchData();
   }, []);
 
   const convertPrice = (price, currency) => {
-    if (currency === 'USD') return price;
+    if (currency === 'USD' || !conversionRates[currency]) return price;
     return (price * conversionRates[currency]).toFixed(2);
   };
 
@@ -119,11 +81,17 @@ const MainComponent = () => {
       <HeaderNavbar
         currency={currency}
         setCurrency={setCurrency}
+        language={language}
+        setLanguage={setLanguage}
         cart={cart}
-        addToCart={addToCart}
       />
-      {loading && <p>Loading products...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {error && (
+        <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          {error}
+        </div>
+      )}
+
       <section className="hero-section">
         <video autoPlay loop muted playsInline className="hero-video">
           <source
@@ -137,44 +105,70 @@ const MainComponent = () => {
           <button className="shop-btn">Shop Exclusive Products</button>
         </div>
       </section>
-      {Object.keys(products).map((category) => (
-        <section key={category} className="product-section">
-          <h2 className="collection-title">{category.charAt(0).toUpperCase() + category.slice(1)} Collection</h2>
-          <div className="product-grid">
-            {products[category]?.map((product) => (
-              <div key={product._id} className="luxury-product-card">
-                <div className="luxury-product-image">
-                  <img src={product.image || 'https://via.placeholder.com/150'} alt={product.name} />
-                  {product.sale && <span className="sale-tag">Sale</span>}
-                </div>
-                <div className="luxury-product-info">
-                  <h3 className="product-name">{product.name}</h3>
-                  <p className="luxury-rating">{Array.from({ length: Math.floor(product.rating) }, (_, i) => (i + 1)).map((_, i) => <span key={i}>⭐</span>)}</p>
-                  <p className="luxury-price">
-                    {currency} {convertPrice(product.price, currency)}
-                  </p>
-                  <div className="quantity-selector">
-                    <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
-                    <select
-                      id={`quantity-${product._id}`}
-                      defaultValue="1"
-                      onChange={(e) => setQuantity(parseInt(e.target.value))}
-                    >
-                      {[...Array(10).keys()].map(number => (
-                        <option key={number} value={number + 1}>{number + 1}</option>
-                      ))}
-                    </select>
-                    <button className="add-to-cart" onClick={() => addToCart(product._id.toString(), category, quantity)}>
-                      Add to Cart
-                    </button>
+
+      {loading ? (
+        <div className="loading-spinner">Loading products...</div>
+      ) : (
+        Object.keys(products).map((category) => (
+          <section key={category} className="product-section">
+            <h2 className="collection-title">
+              {category.charAt(0).toUpperCase() + category.slice(1)} Collection
+            </h2>
+            <div className="product-grid">
+              {products[category]?.map((product) => (
+                <div key={product._id} className="luxury-product-card">
+                  <div className="luxury-product-image">
+                    <img 
+                      src={product.image || 'https://via.placeholder.com/150'} 
+                      alt={product.name}
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/150';
+                      }}
+                    />
+                    {product.sale && <span className="sale-tag">Sale</span>}
+                  </div>
+                  <div className="luxury-product-info">
+                    <h3 className="product-name">{product.name}</h3>
+                    <p className="luxury-rating">
+                      {Array.from(
+                        { length: Math.floor(product.rating || 0) },
+                        (_, i) => (
+                          <span key={i}>⭐</span>
+                        )
+                      )}
+                    </p>
+                    <p className="luxury-price">
+                      {currency} {convertPrice(product.price, currency)}
+                    </p>
+                    <div className="quantity-selector">
+                      <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
+                      <select
+                        id={`quantity-${product._id}`}
+                        value={quantity}
+                        onChange={(e) => setQuantity(parseInt(e.target.value))}
+                        className="quantity-select"
+                      >
+                        {[...Array(10)].map((_, i) => (
+                          <option key={i + 1} value={i + 1}>
+                            {i + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        className="add-to-cart"
+                        onClick={() => addToCart(product._id, category, quantity)}
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <button className="show-all-btn">Show All</button>
-        </section>
-      ))}
+              ))}
+            </div>
+            <button className="show-all-btn">Show All</button>
+          </section>
+        ))
+      )}
       <Footer />
     </div>
   );
