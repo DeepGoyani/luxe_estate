@@ -17,10 +17,10 @@
 - **API Handling**: Axios  
 
 ## **API Documentation**  
-📖 View the full API documentation **[here](#)**. *(Replace # with your API documentation link)*  
+📖 View the full API documentation **https://documenter.getpostman.com/view/39216507/2sAYdbPYVv**.
 
 ## **Figma Design**  
-🎨 Check out the **Figma UI/UX design** **https://www.figma.com/design/8idhJAd1WOXAiQWHxvZPci/Kreep?node-id=110-1485&t=RT2QWcnHsCjIt9Yp-1**. *(Replace # with your Figma link)*  
+🎨 Check out the **Figma UI/UX design** **https://www.figma.com/design/8idhJAd1WOXAiQWHxvZPci/Kreep?node-id=110-1485&t=RT2QWcnHsCjIt9Yp-1**.
 
 ## **Contact & Socials**  
 📧 **Email**: deepgoyani77@gmail.com 
