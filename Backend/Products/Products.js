@@ -134,7 +134,30 @@
           res.status(500).json({ error: "Error fetching product" });
         }
       });
-
+      app.get("/api/tshirts", (req, res) => {
+        const { material } = req.query;
+      
+        const tshirts = [
+          {
+            name: "Premium T-Shirt",
+            imageUrl: "https://your-image-url.com/tshirt1.png",
+            price: 29.99,
+            newArrival: true,
+            material: "Cashmere",
+          },
+          {
+            name: "Luxury Merino Tee",
+            imageUrl: "https://your-image-url.com/tshirt2.png",
+            price: 39.99,
+            newArrival: false,
+            material: "Merino Wool",
+          },
+        ];
+      
+        const filteredTshirts = tshirts.filter((tshirt) => tshirt.material === material);
+        res.json(filteredTshirts);
+      });
+      
       // Route to fetch conversion rates
       app.get('/api/conversion-rates', async (req, res) => {
         try {

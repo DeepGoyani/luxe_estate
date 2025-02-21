@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainComponent from "./MainComponent";
 import Cart from "./assets/Cart/Cart";
+import ContactPage from "./assets/Contactus/ContactUs";
+import LuxuryAuth from "./Signin/LuxuryAuth";
+import TshirtCollection from "./assets/T-Shirt/T-Shirt";
 
 const App = () => {
   return (
@@ -8,6 +11,11 @@ const App = () => {
       <Routes>
         <Route path="/" element={<MainComponent/>} />
         <Route path="/cart" element={<Cart/>} />
+        <Route path="/contactus" element={<ContactPage/>}/>
+        <Route path="/signin" element={<LuxuryAuth/>}/>
+        <Route path="/tshirt" element={<TshirtCollection/>}/>
+
+
       </Routes>
     </Router>
   );
