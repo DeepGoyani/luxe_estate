@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Landing.css';
@@ -11,18 +11,21 @@ const Footer = () => {
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
+    setSubscriptionError(null);
+
     if (!email) {
       setSubscriptionError('Please enter a valid email address.');
       return;
     }
+
     try {
-      localStorage.setItem('subscriberEmail', email);
       await axios.post(`${API_URL}/subscribers`, { email });
+      localStorage.setItem('subscriberEmail', email);
       alert('Subscribed successfully!');
       setEmail('');
     } catch (err) {
-      setSubscriptionError('Failed to subscribe. Please try again later.');
       console.error('Error subscribing:', err);
+      setSubscriptionError('Failed to subscribe. Please try again later.');
     }
   };
 
@@ -55,7 +58,11 @@ const Footer = () => {
       </div>
       <div className="footer-columns">
         <h4>Help</h4>
-        {/* Add your help links here */}
+        <ul>
+          <li><Link to="/faq">FAQ</Link></li>
+          <li><Link to="/shipping">Shipping</Link></li>
+          <li><Link to="/support">Support</Link></li>
+        </ul>
       </div>
       <div className="footer-columns">
         <h4>Newsletter</h4>
@@ -69,7 +76,9 @@ const Footer = () => {
           />
           <button type="submit">SUBSCRIBE</button>
         </form>
-        {subscriptionError && <p style={{ color: 'red' }}>{subscriptionError}</p>}
+        {subscriptionError && (
+          <p className="error-message">{subscriptionError}</p>
+        )}
       </div>
       <div className="copyright">
         <p>2023 The Luxe Estate. All rights reserved</p>

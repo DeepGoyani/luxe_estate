@@ -1,11 +1,16 @@
-import MainContent from "./MainComponent";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainComponent from "./MainComponent";
+import Cart from "./assets/Cart/Cart";
 
-const LuxeEstate = () => {
+const App = () => {
   return (
-    <div className="main">
-      <MainContent/>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainComponent/>} />
+        <Route path="/cart" element={<Cart/>} />
+      </Routes>
+    </Router>
   );
 };
 
-export default LuxeEstate;
+export default App;
