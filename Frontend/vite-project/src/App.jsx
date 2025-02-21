@@ -4,6 +4,7 @@ import Cart from "./assets/Cart/Cart";
 import ContactPage from "./assets/Contactus/ContactUs";
 import LuxuryAuth from "./Signin/LuxuryAuth";
 import TshirtCollection from "./assets/T-Shirt/T-Shirt";
+import ShirtCollection from "./assets/Shirt/Shirt";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Route path="/contactus" element={<ContactPage/>}/>
         <Route path="/signin" element={<LuxuryAuth/>}/>
         <Route path="/tshirt" element={<TshirtCollection/>}/>
+        <Route path="/shirt" element={<ShirtCollection/>}/>
 
 
       </Routes>
