@@ -20,7 +20,7 @@
 📖 View the full API documentation **[here](#)**. *(Replace # with your API documentation link)*  
 
 ## **Figma Design**  
-🎨 Check out the **Figma UI/UX design** **[here](#)**. *(Replace # with your Figma link)*  
+🎨 Check out the **Figma UI/UX design** **https://www.figma.com/design/8idhJAd1WOXAiQWHxvZPci/Kreep?node-id=110-1485&t=RT2QWcnHsCjIt9Yp-1**. *(Replace # with your Figma link)*  
 
 ## **Contact & Socials**  
 📧 **Email**: deepgoyani77@gmail.com 
