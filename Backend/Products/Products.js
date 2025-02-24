@@ -157,7 +157,16 @@
         const filteredTshirts = tshirts.filter((tshirt) => tshirt.material === material);
         res.json(filteredTshirts);
       });
+      app.get("/api/tshirts", async (req, res) => {
+        const { material } = req.query;
       
+        try {
+          const tshirts = await db.collection("tshirts").find({ material }).toArray();
+          res.json(tshirts);
+        } catch (err) {
+          res.status(500).json({ error: "Error fetching T-shirts" });
+        }
+      });
       // Route to fetch conversion rates
       app.get('/api/conversion-rates', async (req, res) => {
         try {
