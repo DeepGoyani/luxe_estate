@@ -1,6 +1,9 @@
 import  { useState } from 'react';
 import { Star, ChevronRight, Search, ShoppingBag, Heart } from 'lucide-react';
 import './Exclusive.css';
+import HeaderNavbar from '../../HeaderNavbar';
+import Footer from '../../Footer';
+
 
 const ExclusiveProducts = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -30,6 +33,8 @@ const ExclusiveProducts = () => {
   return (
     <div className="exclusive-shop">
       {/* Hero Section */}
+      <HeaderNavbar/>
+
       <div className="hero-section">
         <div className="hero-content">
           <h1>Exclusive Collection</h1>
@@ -111,6 +116,7 @@ const ExclusiveProducts = () => {
           </div>
         ))}
       </div>
+      <Footer/>
     </div>
   );
 };
