@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import axios from 'axios';
 import HeaderNavbar from './HeaderNavbar';
 import Footer from './Footer';
@@ -38,7 +38,7 @@ const MainComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const categories = ['men', 'women', 'tshirts', 'shirts', 'trousers'];
+        const categories = ['men', 'women', 'tshirts', 'trousers'];
         
         // Fetch all data in parallel
         const [productsResponses, cartResponse, ratesResponse] = await Promise.all([
@@ -155,7 +155,7 @@ const MainComponent = () => {
                         ))}
                       </select>
                       <button
-                        className="add-to-cart"
+                        className="luxury-add-to-cart"
                         onClick={() => addToCart(product._id, category, quantity)}
                       >
                         Add to Cart
