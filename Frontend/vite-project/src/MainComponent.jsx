@@ -61,7 +61,7 @@ const MainComponent = () => {
         setConversionRates(ratesResponse.data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching data:', err);
+           console.error('Error fetching data:', err);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
@@ -69,7 +69,7 @@ const MainComponent = () => {
     };
 
     fetchData();
-  }, []);
+  }, []); 
 
   const convertPrice = (price, currency) => {
     if (currency === 'USD' || !conversionRates[currency]) return price;
