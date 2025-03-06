@@ -1,41 +1,51 @@
-import "./Shirt.css";
-import HeaderNavbar from "../../HeaderNavbar";
-import Footer from "../../Footer";
-import { useEffect, useState } from "react";
+import  { useState, useEffect } from 'react';
+import axios from 'axios';
+import './Shirt.css'; // Ensure this file exists for styling
 
-export default function ShirtCollection() {
-  const materials = ["Cotton", "Silk", "Linen", "Flannel"];
-  const [products, setProducts] = useState({});
+const ShirtsCollection = () => {
+  const [shirts, setShirts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    materials.forEach((material) => {
-      fetch(`http://localhost:5000/api/products/shirts?material=${material}`)
-        .then((res) => res.json())
-        .then((data) => setProducts((prev) => ({ ...prev, [material]: data })))
-        .catch((err) => console.error("Error fetching data:", err));
-    });
+    const fetchShirts = async () => {
+     try {
+       const response = await axios.get('/api/shirts');
+       setShirts(response.data);
+       setLoading(false);
+       setError(null);
+     } catch (err) {
+       // Log error to console or a monitoring service
+       console.error('Error fetching shirts:', err);
+       setLoading(false);
+       setError(err.message || 'Failed to load shirts');
+     }
+   };
+
+    fetchShirts();
   }, []);
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="app">
-      <HeaderNavbar />
-      <main className="main-content">
-        <h2 className="collection-title">Shirt Collection</h2>
-        {materials.map((material) => (
-          <section key={material} className="product-section">
-            <h3 className="material-title">{material} Material</h3>
-            <div className="product-grid">
-              {products[material]?.map((product, index) => (
-                <div key={index} className="product-card">
-                  <img src={product.image} alt={product.name} className="product-image" />
-                  <div className="product-tag">NEW</div>
-                </div>
-              ))}
-            </div>
-          </section>
+    <div className="shirts-collection">
+      <h1>Shirts Collection</h1>
+      <div className="filter-section">
+        {/* Add filters if needed */}
+      </div>
+      <div className="products-grid">
+        {shirts.map(shirt => (
+          <div key={shirt._id} className="product-card">
+            <img src={shirt.image} alt={shirt.name} />
+            <h3>{shirt.name}</h3>
+            <p>${shirt.price}</p>
+            <p>Rating: {shirt.rating}</p>
+          </div>
         ))}
-      </main>
-      <Footer />
+      </div>
     </div>
   );
-}
+};
+
+export default ShirtsCollection;
