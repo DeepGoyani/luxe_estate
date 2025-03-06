@@ -8,31 +8,39 @@ const API_URL = 'http://localhost:3000/api';
 const Footer = () => {
   const [email, setEmail] = useState('');
   const [subscriptionError, setSubscriptionError] = useState(null);
+  const [subscriptionSuccess, setSubscriptionSuccess] = useState(null);
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     setSubscriptionError(null);
+    setSubscriptionSuccess(null);
 
-    if (!email) {
+    if (!validateEmail(email)) {
       setSubscriptionError('Please enter a valid email address.');
       return;
     }
 
     try {
-      await axios.post(`${API_URL}/subscribers`, { email });
+      const response = await axios.post(`${API_URL}/subscribers`, { email });
       localStorage.setItem('subscriberEmail', email);
-      alert('Subscribed successfully!');
+      setSubscriptionSuccess(response.data.message);
       setEmail('');
     } catch (err) {
       console.error('Error subscribing:', err);
-      setSubscriptionError('Failed to subscribe. Please try again later.');
+      const errorMsg = err.response?.data?.error || 'Failed to subscribe. Try again later.';
+      setSubscriptionError(errorMsg);
     }
   };
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('subscriberEmail');
     if (savedEmail) {
-      setEmail(savedEmail);
+      setEmail(savedEmail); // Optional: Could disable form instead
     }
   }, []);
 
@@ -72,13 +80,11 @@ const Footer = () => {
             placeholder="Enter Your Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
           <button type="submit">SUBSCRIBE</button>
         </form>
-        {subscriptionError && (
-          <p className="error-message">{subscriptionError}</p>
-        )}
+        {subscriptionSuccess && <p className="success-message">{subscriptionSuccess}</p>}
+        {subscriptionError && <p className="error-message">{subscriptionError}</p>}
       </div>
       <div className="copyright">
         <p>2023 The Luxe Estate. All rights reserved</p>
