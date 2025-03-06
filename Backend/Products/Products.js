@@ -78,7 +78,31 @@
     }
   });
 
-
+  app.post('/api/subscribers', async (req, res) => {
+    const { email } = req.body;
+  
+    // Frontend validates too, but double-check here
+    if (!email || !validateEmail(email)) {
+      return res.status(400).json({ error: "Invalid email address" });
+    }
+  
+    try {
+      const subscribersCollection = db.collection("subscribers");
+  
+      // Optional: Check for existing subscriber
+      const existingSubscriber = await subscribersCollection.findOne({ email });
+      if (existingSubscriber) {
+        return res.status(409).json({ error: "Email already subscribed" });
+      }
+  
+      const result = await subscribersCollection.insertOne({ email, subscribedAt: new Date() });
+      console.log(`Subscribed: ${email}, Result: ${result.insertedId}`);
+      res.status(201).json({ message: "Subscribed successfully", id: result.insertedId });
+    } catch (err) {
+      console.error("Subscription error:", err);
+      res.status(500).json({ error: "Failed to subscribe", details: err.message });
+    }
+  });
   // Fetch cart items
   app.get('/api/cart', async (req, res) => {
     try {
@@ -120,7 +144,19 @@
       res.status(500).json({ error: "Error updating quantity" });
     }
   });
-
+  app.get('/api/shirts', async (req, res) => {
+    const { material } = req.query;
+    try {
+      let query = {};
+      if (material) {
+        query = { material: material };
+      }
+      const shirts = await db.collection("shirts").find(query).toArray();
+      res.json(shirts);
+    } catch (err) {
+      res.status(500).json({ error: "Error fetching shirts" });
+    }
+  });
       // Route to fetch product details by category and ID
       app.get('/api/:category/:productId', async (req, res) => {
         const { category, productId } = req.params;
