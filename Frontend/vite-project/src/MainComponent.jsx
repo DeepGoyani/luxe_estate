@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import HeaderNavbar from './HeaderNavbar';
 import Footer from './Footer';
@@ -39,29 +39,23 @@ const MainComponent = () => {
     const fetchData = async () => {
       try {
         const categories = ['men', 'women', 'tshirts', 'trousers'];
-        
-        // Fetch all data in parallel
         const [productsResponses, cartResponse, ratesResponse] = await Promise.all([
-          Promise.all(
-            categories.map(category => axios.get(`${API_URL}/${category}`))
-          ),
+          Promise.all(categories.map((category) => axios.get(`${API_URL}/${category}`))),
           axios.get(`${API_URL}/cart`),
-          axios.get(`${API_URL}/conversion-rates`)
+          axios.get(`${API_URL}/conversion-rates`),
         ]);
 
-        // Process products data
         const productsData = productsResponses.reduce((acc, response, index) => {
           acc[categories[index]] = response.data;
           return acc;
         }, {});
 
-        // Update all states
         setProducts(productsData);
         setCart(cartResponse.data.items || []);
         setConversionRates(ratesResponse.data);
         setError(null);
       } catch (err) {
-           console.error('Error fetching data:', err);
+        console.error('Error fetching data:', err);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
@@ -69,7 +63,7 @@ const MainComponent = () => {
     };
 
     fetchData();
-  }, []); 
+  }, []);
 
   const convertPrice = (price, currency) => {
     if (currency === 'USD' || !conversionRates[currency]) return price;
@@ -110,7 +104,11 @@ const MainComponent = () => {
         <div className="loading-spinner">Loading products...</div>
       ) : (
         Object.keys(products).map((category) => (
-          <section key={category} className="product-section">
+          <section
+            key={category}
+            id={category} // Add ID for scrolling
+            className="product-section"
+          >
             <h2 className="collection-title">
               {category.charAt(0).toUpperCase() + category.slice(1)} Collection
             </h2>
@@ -118,8 +116,8 @@ const MainComponent = () => {
               {products[category]?.map((product) => (
                 <div key={product._id} className="luxury-product-card">
                   <div className="luxury-product-image">
-                    <img 
-                      src={product.image || 'https://via.placeholder.com/150'} 
+                    <img
+                      src={product.image || 'https://via.placeholder.com/150'}
                       alt={product.name}
                       onError={(e) => {
                         e.target.src = 'https://via.placeholder.com/150';
