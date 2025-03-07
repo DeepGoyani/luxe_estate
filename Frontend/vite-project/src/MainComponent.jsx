@@ -177,6 +177,14 @@ const MainComponent = () => {
             ):(
               <button className="show-all-btn">Shop All</button>
             )}
+             {category === 'trousers' ? (
+              <Link to="/trousers" className="show-all-btn">
+                Shop All
+              </Link>
+              
+            ):(
+              <button className="show-all-btn">Shop All</button>
+            )}
           </section>
         ))
       )}
