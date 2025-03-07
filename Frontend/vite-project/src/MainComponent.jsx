@@ -39,7 +39,7 @@ const MainComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const categories = ['men', 'women', 'tshirts', 'trousers'];
+        const categories = ['men', 'women', 'tshirts', 'trousers','shirts'];
         const [productsResponses, cartResponse, ratesResponse] = await Promise.all([
           Promise.all(categories.map((category) => axios.get(`${API_URL}/${category}`))),
           axios.get(`${API_URL}/cart`),
@@ -96,7 +96,7 @@ const MainComponent = () => {
           Your browser does not support the video tag.
         </video>
         <div className="hero-overlay">
-          <h2>Luxury Starts and Ends With Us</h2>
+          <h2>Luxury Starts and Ends With Us</h2> 
           <button className="shop-btn">Shop Exclusive Products</button>
         </div>
       </section>
@@ -160,12 +160,21 @@ const MainComponent = () => {
                 </div>
               ))}
             </div>
+        
             {/* Conditionally render Link for tshirts, button for others */}
             {category === 'tshirts' ? (
               <Link to="/tshirt" className="show-all-btn">
                 Shop All
               </Link>
             ) : (
+              <button className="show-all-btn">Shop All</button>
+            )}
+            {category === 'shirts' ? (
+              <Link to="/shirt" className="show-all-btn">
+                Shop All
+              </Link>
+              
+            ):(
               <button className="show-all-btn">Shop All</button>
             )}
           </section>
