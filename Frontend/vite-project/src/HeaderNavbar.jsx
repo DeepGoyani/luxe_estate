@@ -1,13 +1,12 @@
-// HeaderNavbar.jsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link  } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './Landing.css';
 
 const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', setLanguage, cart }) => {
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  
+
   const currencies = ['INR', 'USD', 'EUR', 'GBP', 'JPY'];
   const languages = ['English', 'Hindi', 'Spanish', 'French', 'German'];
 
@@ -21,6 +20,14 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
     setShowLanguageDropdown(false);
   };
 
+  // Scroll to section function
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   // Close dropdowns when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -29,7 +36,6 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
         setShowLanguageDropdown(false);
       }
     };
-
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
@@ -41,16 +47,24 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
       </header>
       <nav className="navbar">
         <div className="nav-links">
-          <button className="nav-btn">Shop Men</button>
-          <button className="nav-btn">Shop Women</button>
-          <button className="nav-btn">Contact Us</button>
+          <button className="nav-btn" onClick={() => scrollToSection('men')}>
+            Shop Men
+          </button>
+          <button className="nav-btn" onClick={() => scrollToSection('women')}>
+            Shop Women
+          </button>
+          <Link to="/contactus" className="nav-btn" style={{ textDecoration: 'none', color: 'inherit' }}>
+            Contact Us
+          </Link>
         </div>
         <div className="nav-controls">
           <div className="dropdown">
-            <button onClick={(e) => {
-              e.stopPropagation();
-              setShowCurrencyDropdown(!showCurrencyDropdown);
-            }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCurrencyDropdown(!showCurrencyDropdown);
+              }}
+            >
               {currency} ▼
             </button>
             {showCurrencyDropdown && (
@@ -64,10 +78,12 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
             )}
           </div>
           <div className="dropdown">
-            <button onClick={(e) => {
-              e.stopPropagation();
-              setShowLanguageDropdown(!showLanguageDropdown);
-            }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowLanguageDropdown(!showLanguageDropdown);
+              }}
+            >
               {language} ▼
             </button>
             {showLanguageDropdown && (
@@ -94,7 +110,7 @@ HeaderNavbar.propTypes = {
   setCurrency: PropTypes.func.isRequired,
   language: PropTypes.string,
   setLanguage: PropTypes.func.isRequired,
-  cart: PropTypes.array
+  cart: PropTypes.array,
 };
 
 export default HeaderNavbar;
