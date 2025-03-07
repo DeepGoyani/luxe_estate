@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Add this import
 import axios from 'axios';
 import HeaderNavbar from './HeaderNavbar';
 import Footer from './Footer';
@@ -66,7 +67,7 @@ const MainComponent = () => {
   }, []);
 
   const convertPrice = (price, currency) => {
-    if (currency === 'USD' || !conversionRates[currency]) return price;
+    if (currency === 'INR' || !conversionRates[currency]) return price; // Fixed condition
     return (price * conversionRates[currency]).toFixed(2);
   };
 
@@ -104,11 +105,7 @@ const MainComponent = () => {
         <div className="loading-spinner">Loading products...</div>
       ) : (
         Object.keys(products).map((category) => (
-          <section
-            key={category}
-            id={category} // Add ID for scrolling
-            className="product-section"
-          >
+          <section key={category} id={category} className="product-section">
             <h2 className="collection-title">
               {category.charAt(0).toUpperCase() + category.slice(1)} Collection
             </h2>
@@ -163,7 +160,14 @@ const MainComponent = () => {
                 </div>
               ))}
             </div>
-            <button className="show-all-btn">Show All</button>
+            {/* Conditionally render Link for tshirts, button for others */}
+            {category === 'tshirts' ? (
+              <Link to="/tshirt" className="show-all-btn">
+                Shop All
+              </Link>
+            ) : (
+              <button className="show-all-btn">Shop All</button>
+            )}
           </section>
         ))
       )}
