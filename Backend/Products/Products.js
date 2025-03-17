@@ -212,7 +212,122 @@
           res.status(500).json({ error: "Error fetching conversion rates" });
         }
       });
-
+      
+      app.get('/tshirts', async (req, res) => {
+        try {
+            const { sort, minPrice, maxPrice, size, color, newArrival } = req.query;
+            let filter = {};
+    
+            // Price Range Filter
+            if (minPrice && maxPrice) {
+                filter.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+            }
+    
+            // Size Filter (checks if the size exists in array)
+            if (size) {
+                filter.size = size;
+            }
+    
+            // Color Filter (checks if the color exists in array)
+            if (color) {
+                filter.color = color;
+            }
+    
+            // New Arrival Filter
+            if (newArrival) {
+                filter.newArrival = newArrival === "true";
+            }
+    
+            // Sorting Logic
+            let sortOption = {};
+            if (sort === "price_asc") {
+                sortOption.price = 1; // Low to High
+            } else if (sort === "price_desc") {
+                sortOption.price = -1; // High to Low
+            } else if (sort === "new_arrivals") {
+                sortOption.newArrival = -1; // Show New Arrivals First
+            }
+    
+            const tshirts = await db.collection("tshirts").find(filter).sort(sortOption).toArray();
+            res.json(tshirts);
+        } catch (err) {
+            res.status(500).json({ error: "Error fetching T-shirts data" });
+        }
+    });
+    app.get('/:category', async (req, res) => {
+      try {
+          const { category } = req.params;
+          const { sort, minPrice, maxPrice, size, color, newArrival } = req.query;
+  
+          // Ensure category is valid
+          const validCategories = ['men', 'women', 'tshirts', 'trousers', 'shirts'];
+          if (!validCategories.includes(category)) {
+              return res.status(400).json({ error: "Invalid category" });
+          }
+  
+          let filter = {};
+  
+          // Price Range Filter
+          if (minPrice && maxPrice) {
+              filter.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+          }
+  
+          // Size Filter (checks if size exists in array)
+          if (size) {
+              filter.size = size;
+          }
+  
+          // Color Filter (checks if color exists in array)
+          if (color) {
+              filter.color = color;
+          }
+  
+          // New Arrival Filter
+          if (newArrival) {
+              filter.newArrival = newArrival === "true";
+          }
+  
+          // Sorting Logic
+          let sortOption = {};
+          if (sort === "price_asc") {
+              sortOption.price = 1; // Low to High
+          } else if (sort === "price_desc") {
+              sortOption.price = -1; // High to Low
+          } else if (sort === "new_arrivals") {
+              sortOption.newArrival = -1; // Show New Arrivals First
+          }
+  
+          const collection = db.collection(category);
+          const products = await collection.find(filter).sort(sortOption).toArray();
+  
+          res.json(products);
+      } catch (err) {
+          res.status(500).json({ error: "Error fetching products" });
+      }
+  });
+  
+      app.get('/api/:category', async (req, res) => {
+        const category = req.params.category;
+        try {
+          const products = await db.collection(category).find().toArray();
+          res.json(products);
+        } catch (err) {
+          res.status(500).json({ error: "Error fetching products", details: err.message });
+        }
+      });
+      // Fetch product details by category and ID
+      app.get('/api/:category/:productId', async (req, res) => {
+        const { category, productId } = req.params;
+        try {
+          const product = await db.collection(category).findOne({ _id: new ObjectId(productId) });
+          if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+          }
+          res.json(product);
+        } catch (err) {
+          res.status(500).json({ error: "Error fetching product", details: err.message });
+        }
+      });
       // Start the server
       app.listen(PORT, () => {
         console.log(`Server is running on http://localhost:${PORT}`);
