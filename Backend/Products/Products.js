@@ -212,7 +212,28 @@
           res.status(500).json({ error: "Error fetching conversion rates" });
         }
       });
-
+      app.get('/api/:category', async (req, res) => {
+        const category = req.params.category;
+        try {
+          const products = await db.collection(category).find().toArray();
+          res.json(products);
+        } catch (err) {
+          res.status(500).json({ error: "Error fetching products", details: err.message });
+        }
+      });
+      // Fetch product details by category and ID
+      app.get('/api/:category/:productId', async (req, res) => {
+        const { category, productId } = req.params;
+        try {
+          const product = await db.collection(category).findOne({ _id: new ObjectId(productId) });
+          if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+          }
+          res.json(product);
+        } catch (err) {
+          res.status(500).json({ error: "Error fetching product", details: err.message });
+        }
+      });
       // Start the server
       app.listen(PORT, () => {
         console.log(`Server is running on http://localhost:${PORT}`);
