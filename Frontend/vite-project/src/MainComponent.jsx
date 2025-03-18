@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Add this import
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import HeaderNavbar from './HeaderNavbar';
 import Footer from './Footer';
 import './Landing.css';
 
+// Directly defined API URL (replace with your actual backend URL)
 const API_URL = 'http://localhost:3000/api';
 
 const MainComponent = () => {
@@ -15,7 +16,15 @@ const MainComponent = () => {
   const [conversionRates, setConversionRates] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantities, setQuantities] = useState({});
+
+  // Define valid product categories
+  const CATEGORIES = ['men', 'women', 'tshirts', 'trousers', 'shirts'];
+  const SHOP_ALL_ROUTES = {
+    tshirts: '/tshirt',
+    shirts: '/shirt',
+    trousers: '/trousers'
+  };
 
   const addToCart = async (productId, category, quantity) => {
     try {
@@ -39,15 +48,22 @@ const MainComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const categories = ['men', 'women', 'tshirts', 'trousers','shirts'];
         const [productsResponses, cartResponse, ratesResponse] = await Promise.all([
-          Promise.all(categories.map((category) => axios.get(`${API_URL}/${category}`))),
+          Promise.all(CATEGORIES.map(category => 
+            axios.get(`${API_URL}/${category}`)
+              .then(res => ({ category, data: res.data }))
+              .catch(error => {
+                console.error(`Error fetching ${category}:`, error);
+                return { category, data: [] };
+              })
+          )),
           axios.get(`${API_URL}/cart`),
           axios.get(`${API_URL}/conversion-rates`),
         ]);
 
-        const productsData = productsResponses.reduce((acc, response, index) => {
-          acc[categories[index]] = response.data;
+        // Transform products data
+        const productsData = productsResponses.reduce((acc, { category, data }) => {
+          acc[category] = data;
           return acc;
         }, {});
 
@@ -67,8 +83,24 @@ const MainComponent = () => {
   }, []);
 
   const convertPrice = (price, currency) => {
-    if (currency === 'INR' || !conversionRates[currency]) return price; // Fixed condition
+    if (currency === 'INR' || !conversionRates[currency]) return price;
     return (price * conversionRates[currency]).toFixed(2);
+  };
+
+  const handleQuantityChange = (productId, value) => {
+    setQuantities(prev => ({
+      ...prev,
+      [productId]: Math.max(1, Math.min(10, Number(value)))
+    }));
+  };
+
+  const getShopAllLink = (category) => {
+    const route = SHOP_ALL_ROUTES[category];
+    return route ? (
+      <Link to={route} className="show-all-btn">Shop All</Link>
+    ) : (
+      <button className="show-all-btn">Shop All</button>
+    );
   };
 
   return (
@@ -104,90 +136,78 @@ const MainComponent = () => {
       {loading ? (
         <div className="loading-spinner">Loading products...</div>
       ) : (
-        Object.keys(products).map((category) => (
-          <section key={category} id={category} className="product-section">
-            <h2 className="collection-title">
-              {category.charAt(0).toUpperCase() + category.slice(1)} Collection
-            </h2>
-            <div className="product-grid">
-              {products[category]?.map((product) => (
-                <div key={product._id} className="luxury-product-card">
-                  <div className="luxury-product-image">
-                    <img
-                      src={product.image || 'https://via.placeholder.com/150'}
-                      alt={product.name}
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/150';
-                      }}
-                    />
-                    {product.sale && <span className="sale-tag">Sale</span>}
-                  </div>
-                  <div className="luxury-product-info">
-                    <h3 className="product-name">{product.name}</h3>
-                    <p className="luxury-rating">
-                      {Array.from(
-                        { length: Math.floor(product.rating || 0) },
-                        (_, i) => (
-                          <span key={i}>⭐</span>
-                        )
-                      )}
-                    </p>
-                    <p className="luxury-price">
-                      {currency} {convertPrice(product.price, currency)}
-                    </p>
-                    <div className="quantity-selector">
-                      <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
-                      <select
-                        id={`quantity-${product._id}`}
-                        value={quantity}
-                        onChange={(e) => setQuantity(parseInt(e.target.value))}
-                        className="quantity-select"
-                      >
-                        {[...Array(10)].map((_, i) => (
-                          <option key={i + 1} value={i + 1}>
-                            {i + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        className="luxury-add-to-cart"
-                        onClick={() => addToCart(product._id, category, quantity)}
-                      >
-                        Add to Cart
-                      </button>
+        CATEGORIES.map(category => (
+          products[category]?.length > 0 && (
+            <section key={category} id={category} className="product-section">
+              <h2 className="collection-title">
+                {category.charAt(0).toUpperCase() + category.slice(1)} Collection
+              </h2>
+              
+              <div className="product-grid">
+                {products[category].map(product => (
+                  <div key={product._id} className="luxury-product-card">
+                    <div className="luxury-product-image">
+                      <img
+                        src={product.image || 'https://via.placeholder.com/150'}
+                        alt={product.name}
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/150';
+                        }}
+                      />
+                      {product.sale && <span className="sale-tag">Sale</span>}
+                    </div>
+                    
+                    <div className="luxury-product-info">
+                      <h3 className="product-name">{product.name}</h3>
+                      <p className="luxury-rating">
+                        {Array.from(
+                          { length: Math.floor(product.rating || 0) },
+                          (_, i) => (
+                            <span key={i}>⭐</span>
+                          )
+                        )}
+                      </p>
+                      <p className="luxury-price">
+                        {currency} {convertPrice(product.price, currency)}
+                      </p>
+                      
+                      <div className="quantity-selector">
+                        <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
+                        <select
+                          id={`quantity-${product._id}`}
+                          value={quantities[product._id] || 1}
+                          onChange={(e) => handleQuantityChange(product._id, e.target.value)}
+                          className="quantity-select"
+                        >
+                          {[...Array(10)].map((_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        
+                        <button
+                          className="luxury-add-to-cart"
+                          onClick={() => addToCart(
+                            product._id, 
+                            category, 
+                            quantities[product._id] || 1
+                          )}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-        
-            {/* Conditionally render Link for tshirts, button for others */}
-            {category === 'tshirts' ? (
-              <Link to="/tshirt" className="show-all-btn">
-                Shop All
-              </Link>
-            ) : (
-              <button className="show-all-btn">Shop All</button>
-            )}
-            {category === 'shirts' ? (
-              <Link to="/shirt" className="show-all-btn">
-                Shop All
-              </Link>
-              
-            ):(
-              <button className="show-all-btn">Shop All</button>
-            )}
-             {category === 'trousers' ? (
-              <Link to="/trousers" className="show-all-btn">
-                Shop All
-              </Link>
-              
-            ):(
-              <button className="show-all-btn">Shop All</button>
-            )}
-          </section>
+                ))}
+              </div>
+
+              {getShopAllLink(category)}
+            </section>
+          )
         ))
       )}
+      
       <Footer />
     </div>
   );
