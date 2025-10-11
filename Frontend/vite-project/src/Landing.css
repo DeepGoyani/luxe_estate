@@ -6,7 +6,7 @@
   min-height: 100vh; /* Minimum height to cover the viewport */
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding:  20px;
   box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
@@ -39,7 +39,7 @@
 .nav-links button {
   font-size: 16px;
   border: none;
-  background: none;
+  background: none; 
   cursor: pointer;
   color: #4b3b4d; /* Darker shade for text */
   transition: color 0.3s ease;
@@ -476,15 +476,6 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Header */
-.header {
-  background: linear-gradient(45deg, var(--primary), var(--dark));
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
 
 /* Hero Section */
 .hero-section {
@@ -859,19 +850,6 @@ body {
   padding: 40px;
 }
 
-/* Header */
-.header {
-  background: var(--primary);
-  color: var(--light);
-  padding: 2rem;
-  text-align: center;
-  font-size: 28px;
-  width: 100%;
-  box-shadow: 0 4px 12px var(--shadow);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
 
 /* Navbar */
 .navbar {
@@ -1143,4 +1121,7 @@ body {
   .hero-section {
     height: 60vh;
   }
+}
+.le{
+  color: white;
 }
