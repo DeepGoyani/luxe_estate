@@ -72,7 +72,7 @@ const MainComponent = () => {
         setConversionRates(ratesResponse.data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Error   data:', err);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);

@@ -43,7 +43,7 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
   return (
     <div className="header-navbar">
       <header className="header">
-        <h1 className="le">The Luxe Estate</h1>
+        <h2 className="le">The Luxe Estate</h2>
       </header>
       <nav className="navbar">
         <div className="nav-links">
