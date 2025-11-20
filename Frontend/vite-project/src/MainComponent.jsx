@@ -7,6 +7,15 @@ import './Landing.css';
 
 // Directly defined API URL (replace with your actual backend URL)
 const API_URL = 'http://localhost:3000/api';
+const ENABLE_CONVERSION_RATES = import.meta.env.VITE_ENABLE_CONVERSION_RATES === 'true';
+const INLINE_PLACEHOLDER =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">' +
+      '<rect width="100%" height="100%" fill="#f4efe6" />' +
+      '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#b1976b" font-family="serif" font-size="18">Luxe Estate</text>' +
+    '</svg>'
+  );
 
 const MainComponent = () => {
   const [products, setProducts] = useState({});
@@ -14,6 +23,8 @@ const MainComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
+  const [expandedCategories, setExpandedCategories] = useState({});
+
   const { formatPriceINR } = useCurrency();
 
   // Define valid product categories
@@ -46,7 +57,16 @@ const MainComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productsResponses, cartResponse, ratesResponse] = await Promise.all([
+        const conversionRatesPromise = ENABLE_CONVERSION_RATES
+          ? axios
+              .get(`${API_URL}/conversion-rates`)
+              .catch((conversionErr) => {
+                console.warn('Conversion rates unavailable:', conversionErr?.response?.status || conversionErr?.message);
+                return { data: null };
+              })
+          : Promise.resolve({ data: null });
+
+        const [productsResponses, cartResponse] = await Promise.all([
           Promise.all(CATEGORIES.map(category => 
             axios.get(`${API_URL}/${category}`)
               .then(res => ({ category, data: res.data }))
@@ -56,8 +76,10 @@ const MainComponent = () => {
               })
           )),
           axios.get(`${API_URL}/cart`),
-          axios.get(`${API_URL}/conversion-rates`),
         ]);
+
+        // Fire and forget conversion rates; failure is non-blocking
+        conversionRatesPromise.then(() => {}).catch(() => {});
 
         // Transform products data
         const productsData = productsResponses.reduce((acc, { category, data }) => {
@@ -99,13 +121,11 @@ const MainComponent = () => {
     return value || fallback;
   };
 
-  const getShopAllLink = (category) => {
-    const route = SHOP_ALL_ROUTES[category];
-    return route ? (
-      <Link to={route} className="show-all-btn">Shop All</Link>
-    ) : (
-      <button className="show-all-btn">Shop All</button>
-    );
+  const toggleCategoryView = (category) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
   };
 
   return (
@@ -128,7 +148,9 @@ const MainComponent = () => {
         </video>
         <div className="hero-overlay">
           <h2>Luxury Starts and Ends With Us</h2> 
-          <button className="shop-btn">Shop Exclusive Products</button>
+          <Link to="/exclusive" className="shop-btn">
+            Shop Exclusive Products
+          </Link>
         </div>
       </section>
 
@@ -141,16 +163,16 @@ const MainComponent = () => {
               <h2 className="collection-title">
                 {getDisplayCategory(category)} Collection
               </h2>
-              
+
               <div className="product-grid">
-                {products[category].map(product => (
+                {(expandedCategories[category] ? products[category] : products[category].slice(0, 4)).map(product => (
                   <div key={product._id} className="luxury-product-card">
                     <div className="luxury-product-image">
                       <img
-                        src={product.image || 'https://via.placeholder.com/150'}
+                        src={product.image || INLINE_PLACEHOLDER}
                         alt={product.name}
                         onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/150';
+                          e.target.src = INLINE_PLACEHOLDER;
                         }}
                       />
                       <div className="product-badges">
@@ -246,7 +268,20 @@ const MainComponent = () => {
                 ))}
               </div>
 
-              {getShopAllLink(category)}
+              <div className="section-actions">
+                <button
+                  type="button"
+                  className="show-all-btn"
+                  onClick={() => toggleCategoryView(category)}
+                >
+                  {expandedCategories[category] ? 'Show Less' : 'Show All'}
+                </button>
+                {SHOP_ALL_ROUTES[category] && (
+                  <Link to={SHOP_ALL_ROUTES[category]} className="secondary-link">
+                    Visit full collection
+                  </Link>
+                )}
+              </div>
             </section>
           )
         ))

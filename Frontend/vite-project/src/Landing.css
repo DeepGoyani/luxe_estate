@@ -106,9 +106,9 @@
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
-  gap: 22px;
-  width: min(1340px, 96vw);
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  gap: 28px;
+  width: min(1500px, 95vw);
   margin: 0 auto;
 }
 
@@ -123,9 +123,9 @@
   color: #2c2c2c;
   display: flex;
   align-items: stretch;
-  gap: 0.8rem;
+  gap: 1.1rem;
   width: 100%;
-  max-width: 980px;
+  max-width: 1040px;
   text-align: left;
 }
 
@@ -136,7 +136,7 @@
 
 .luxury-product-image {
   position: relative;
-  flex: 0 0 45%;
+  flex: 0 0 50%;
   aspect-ratio: 2 / 3;
   min-height: 150px;
   border-radius: 10px;
