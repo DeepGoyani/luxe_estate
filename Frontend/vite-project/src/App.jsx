@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState } from 'react';
 import MainComponent from "./MainComponent";
 import Cart from "./assets/Cart/Cart";
 import ContactPage from "./assets/Contactus/ContactUs";
@@ -6,21 +7,40 @@ import LuxuryAuth from "./Signin/LuxuryAuth";
 import TshirtCollection from "./assets/T-Shirt/T-Shirt";
 import ShirtCollection from "./assets/Shirt/Shirt";
 import ExclusiveProducts from "./assets/Exclusive/Exclusive";
+import HeaderNavbar from "./HeaderNavbar";
+import Footer from "./Footer";
 
 const App = () => {
+  const [cart, setCart] = useState([]);
+
+  // You might want to fetch the cart from your API here
+  // useEffect(() => {
+  //   const fetchCart = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:3000/api/cart");
+  //       setCart(response.data.items || []);
+  //     } catch (error) {
+  //       console.error("Error fetching cart:", error);
+  //     }
+  //   };
+  //   fetchCart();
+  // }, []);
+
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<MainComponent/>} />
-        <Route path="/cart" element={<Cart/>} />
-        <Route path="/contactus" element={<ContactPage/>}/>
-        <Route path="/signin" element={<LuxuryAuth/>}/>
-        <Route path="/tshirt" element={<TshirtCollection/>}/>
-        <Route path="/shirt" element={<ShirtCollection/>}/>
-        <Route path="/exclusive" element={<ExclusiveProducts/>  }/>
-
-
-      </Routes>
+      <HeaderNavbar cart={cart} />
+      <main>
+        <Routes>
+          <Route path="/" element={<MainComponent />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/contactus" element={<ContactPage />} />
+          <Route path="/signin" element={<LuxuryAuth />} />
+          <Route path="/tshirt" element={<TshirtCollection />} />
+          <Route path="/shirt" element={<ShirtCollection />} />
+          <Route path="/exclusive" element={<ExclusiveProducts />} />
+        </Routes>
+      </main>
+      <Footer />
     </Router>
   );
 };

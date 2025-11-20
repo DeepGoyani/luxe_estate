@@ -1,23 +1,27 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import HeaderNavbar from "../../HeaderNavbar";
-import Footer from "../../Footer";
+import { useCurrency } from "../../context/CurrencyContext.jsx";
+import "./Cart.css";
+import { FiShoppingBag, FiTrash2, FiPlus, FiMinus, FiHeart } from "react-icons/fi";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { formatPriceINR } = useCurrency();
 
   useEffect(() => {
     fetchCart();
   }, []);
-  
+
   const fetchCart = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/cart");
-      setCartItems(response.data);
-      console.log('Fetched Cart Items:', response.data); // Log to check structure
-    } catch (error) {
+      setCartItems(response.data.items || []);
+      console.log('Fetched Cart Items:', response.data.items);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
       setError("Failed to fetch cart items");
     } finally {
       setLoading(false);
@@ -29,91 +33,231 @@ const Cart = () => {
       console.error("Product ID is undefined!");
       return;
     }
-  
+
     console.log(`Updating quantity for productId: ${id}, New Quantity: ${quantity}`);
-  
-    if (quantity < 1) return removeItem(id); // If 0, remove item
-  
+
+    if (quantity < 1) return removeItem(id);
+
     try {
       await axios.patch(`http://localhost:3000/api/cart/${id}`, { quantity });
-      fetchCart(); // Refresh cart
-    } catch (error) {
-      console.error("Error updating quantity:", error);
+      fetchCart();
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+      setError("Failed to update quantity");
     }
   };
-  
+
   const removeItem = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/api/cart/${id}`);
       fetchCart();
-    } catch (error) {
+    } catch (err) {
+      console.error("Error removing item:", err);
       setError("Failed to remove item");
     }
   };
-  
- 
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+  const calculateSubtotal = () => {
+    return cartItems.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
   };
 
-  return (
-    <>
-      <HeaderNavbar />
-      <div className="p-6 max-w-3xl mx-auto bg-gray-50 min-h-screen">
-        <h2 className="text-2xl font-bold mb-6 text-center">🛒 Your Cart</h2>
+  const calculateTax = () => {
+    // Assuming 18% tax rate
+    const taxRate = 0.18;
+    return calculateSubtotal() * taxRate;
+  };
 
-        {loading && <p className="text-center">Loading...</p>}
-        {error && <p className="text-red-500 text-center">{error}</p>}
+  const calculateTotal = () => {
+    return calculateSubtotal() + calculateTax();
+  };
 
-        {cartItems.length > 0 ? (
-          <div>
-            <ul className="space-y-4">
-            {cartItems.map((item) => (
-  <li key={item.id} className="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
-    <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
-    <div className="flex-1">
-      <h3 className="font-semibold text-lg">{item.name}</h3>
-      <p className="text-gray-600">Price: ${item.price.toFixed(2)}</p>
-      <div className="flex items-center mt-2">
-        <button
-          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-          className="bg-gray-200 px-3 py-1 rounded-md"
-        >
-          -
-        </button>
-        <span className="px-4">{item.quantity}</span>
-        <button
-          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-          className="bg-gray-200 px-3 py-1 rounded-md"
-        >
-          +
-        </button>
-      </div>
-      <button
-        onClick={() => removeItem(item.id)}
-        className="text-red-500 mt-2 hover:text-red-700"
-      >
-        Remove
-      </button>
-    </div>
-  </li>
-))}
-            </ul>
-
-            <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold">Total: ${calculateTotal()}</h3>
-              <button className="w-full mt-4 bg-black text-white py-2 rounded-lg hover:bg-gray-900">
-                Proceed to Checkout
-              </button>
-            </div>
+  if (loading) {
+    return (
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
           </div>
-        ) : (
-          <p className="text-center text-gray-500 text-lg">Your cart is empty 🛍️</p>
-        )}
+        </div>
       </div>
-      <Footer />
-    </>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="error-message">
+            <p>{error}</p>
+            <button onClick={fetchCart}>Try Again</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="empty-cart">
+            <div className="empty-cart-icon">
+              <FiShoppingBag size={48} />
+            </div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added anything to your cart yet.</p>
+            <Link to="/" className="shop-btn">
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cart-page">
+      <div className="cart-container">
+        <div className="cart-header">
+          <h1>Your Shopping Cart</h1>
+          <p>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in cart</p>
+        </div>
+
+        <div className="cart-grid">
+          <div className="cart-items">
+            {cartItems.map((item) => (
+              <div key={item._id} className="cart-item">
+                <div className="cart-item-image">
+                  <div className="image-container">
+                    <div className="image-fallback">
+                      {item.image ? (
+                        <img 
+                          src={item.image} 
+                          alt={item.name}
+                          className="product-image"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
+                      ) : (
+                        <div className="no-image">
+                          <span>No Image</span>
+                        </div>
+                      )}
+                      <div className="no-image" style={{display: 'none'}}>
+                        <span>Image not available</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="cart-item-details">
+                  <div className="product-header">
+                    <h3 className="cart-item-title">{item.name}</h3>
+                    <span className="product-category">{item.category || 'Luxury Apparel'}</span>
+                  </div>
+                  
+                  <div className="product-meta">
+                    <div className="meta-item">
+                      <span className="meta-label">Product ID:</span>
+                      <span className="meta-value">{item._id?.substring(0, 8) || 'N/A'}</span>
+                    </div>
+                    {item.size && (
+                      <div className="meta-item">
+                        <span className="meta-label">Size:</span>
+                        <span className="meta-value">{item.size}</span>
+                      </div>
+                    )}
+                    {item.color && (
+                      <div className="meta-item">
+                        <span className="meta-label">Color:</span>
+                        <span className="meta-value">{item.color}</span>
+                      </div>
+                    )}
+                    <div className="meta-item">
+                      <span className="meta-label">Unit Price:</span>
+                      <span className="meta-value">{formatPriceINR(item.price || 0)}</span>
+                    </div>
+                  </div>
+
+                  <div className="product-actions">
+                    <div className="quantity-selector">
+                      <button 
+                        className="quantity-btn" 
+                        onClick={() => updateQuantity(item._id, (item.quantity || 1) - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        <FiMinus size={14} />
+                      </button>
+                      <span className="quantity-display">{item.quantity || 1}</span>
+                      <button 
+                        className="quantity-btn" 
+                        onClick={() => updateQuantity(item._id, (item.quantity || 1) + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        <FiPlus size={14} />
+                      </button>
+                    </div>
+                    <div className="action-buttons">
+                      <button className="wishlist-btn">
+                        <FiHeart size={16} /> Save for later
+                      </button>
+                      <button 
+                        className="remove-btn" 
+                        onClick={() => removeItem(item._id)}
+                      >
+                        <FiTrash2 size={16} /> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="cart-item-price">
+                  <div className="price-amount">
+                    {formatPriceINR((item.price || 0) * (item.quantity || 1))}
+                  </div>
+                  {item.quantity > 1 && (
+                    <div className="per-unit">
+                      {formatPriceINR(item.price || 0)} each
+                    </div>
+                  )}
+                  {item.inStock ? (
+                    <div className="stock-status in-stock">In Stock</div>
+                  ) : (
+                    <div className="stock-status out-of-stock">Out of Stock</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="cart-summary">
+            <h3 className="summary-title">Order Summary</h3>
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <span>{formatPriceINR(calculateSubtotal())}</span>
+            </div>
+            <div className="summary-row">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+            <div className="summary-row">
+              <span>Tax</span>
+              <span>{formatPriceINR(calculateTax())}</span>
+            </div>
+            <div className="summary-total">
+              <span>Total</span>
+              <span>{formatPriceINR(calculateTotal())}</span>
+            </div>
+            <button className="checkout-btn">
+              Proceed to Checkout
+            </button>
+            <Link to="/" className="continue-shopping">
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

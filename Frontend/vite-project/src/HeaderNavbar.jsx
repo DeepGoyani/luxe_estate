@@ -1,22 +1,43 @@
 import React, { useState } from 'react';
-import { Link  } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useCurrency } from './context/CurrencyContext';
 import PropTypes from 'prop-types';
 import './Landing.css';
 
-const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', setLanguage, cart }) => {
+const HeaderNavbar = ({ cart = [] }) => {
+  const { 
+    currency, 
+    changeCurrency, 
+    language, 
+    changeLanguage,
+    getCurrencySymbol 
+  } = useCurrency();
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
-  const currencies = ['INR', 'USD', 'EUR', 'GBP', 'JPY'];
-  const languages = ['English', 'Hindi', 'Spanish', 'French', 'German'];
+  const currencies = [
+    { code: 'INR', name: `₹ INR` },
+    { code: 'USD', name: `$ USD` },
+    { code: 'EUR', name: `€ EUR` },
+    { code: 'GBP', name: `£ GBP` },
+    { code: 'JPY', name: `¥ JPY` }
+  ];
+
+  const languages = [
+    { code: 'en', name: 'English' },
+    { code: 'hi', name: 'हिंदी' },
+    { code: 'es', name: 'Español' },
+    { code: 'fr', name: 'Français' },
+    { code: 'de', name: 'Deutsch' }
+  ];
 
   const handleCurrencySelect = (cur) => {
-    setCurrency(cur);
+    changeCurrency(cur);
     setShowCurrencyDropdown(false);
   };
 
   const handleLanguageSelect = (lang) => {
-    setLanguage(lang);
+    changeLanguage(lang);
     setShowLanguageDropdown(false);
   };
 
@@ -65,13 +86,17 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
                 setShowCurrencyDropdown(!showCurrencyDropdown);
               }}
             >
-              {currency} ▼
+              {getCurrencySymbol()} {currency} ▼
             </button>
             {showCurrencyDropdown && (
               <ul className="dropdown-menu">
-                {currencies.map((cur) => (
-                  <li key={cur} onClick={() => handleCurrencySelect(cur)}>
-                    {cur}
+                {currencies.map((curr) => (
+                  <li 
+                    key={curr.code} 
+                    onClick={() => handleCurrencySelect(curr.code)}
+                    className={currency === curr.code ? 'active' : ''}
+                  >
+                    {curr.name}
                   </li>
                 ))}
               </ul>
@@ -89,8 +114,12 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
             {showLanguageDropdown && (
               <ul className="dropdown-menu">
                 {languages.map((lang) => (
-                  <li key={lang} onClick={() => handleLanguageSelect(lang)}>
-                    {lang}
+                  <li 
+                    key={lang.code} 
+                    onClick={() => handleLanguageSelect(lang.code)}
+                    className={language === lang.code ? 'active' : ''}
+                  >
+                    {lang.name}
                   </li>
                 ))}
               </ul>
@@ -106,10 +135,6 @@ const HeaderNavbar = ({ currency = 'INR', setCurrency, language = 'English', set
 };
 
 HeaderNavbar.propTypes = {
-  currency: PropTypes.string,
-  setCurrency: PropTypes.func.isRequired,
-  language: PropTypes.string,
-  setLanguage: PropTypes.func.isRequired,
   cart: PropTypes.array,
 };
 
