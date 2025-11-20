@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import HeaderNavbar from "../../HeaderNavbar";
-import Footer from "../../Footer";
 import { useCurrency } from "../../context/CurrencyContext.jsx";
+import "./Cart.css";
+import { FiShoppingBag, FiTrash2, FiPlus, FiMinus, FiHeart } from "react-icons/fi";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -56,174 +57,207 @@ const Cart = () => {
     }
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const calculateSubtotal = () => {
+    return cartItems.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
   };
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const calculateTax = () => {
+    // Assuming 18% tax rate
+    const taxRate = 0.18;
+    return calculateSubtotal() * taxRate;
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() + calculateTax();
   };
 
   if (loading) {
     return (
-      <>
-        <HeaderNavbar />
-        <div className="cart-page">
-          <div className="cart-container">
-            <div className="page-loader">
-              <div className="luxe-ring">
-                <div className="luxe-initials">LE</div>
-              </div>
-            </div>
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
           </div>
         </div>
-        <Footer />
-      </>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="error-message">
+            <p>{error}</p>
+            <button onClick={fetchCart}>Try Again</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="empty-cart">
+            <div className="empty-cart-icon">
+              <FiShoppingBag size={48} />
+            </div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added anything to your cart yet.</p>
+            <Link to="/" className="shop-btn">
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
-      <HeaderNavbar />
-      <div className="cart-page">
-        <div className="cart-hero">
-          <div className="cart-hero-content">
-            <h1>Cart</h1>
-            <div className="breadcrumbs">
-              <span>Home</span>
-              <span className="separator">&gt;</span>
-              <span>Cart</span>
-            </div>
-          </div>
+    <div className="cart-page">
+      <div className="cart-container">
+        <div className="cart-header">
+          <h1>Your Shopping Cart</h1>
+          <p>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in cart</p>
         </div>
 
-        <div className="cart-container">
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-
-          {cartItems.length > 0 ? (
-            <div className="cart-content">
-              <div className="cart-items-section">
-                <div className="cart-table">
-                  <div className="cart-table-header">
-                    <div className="col-product">Product</div>
-                    <div className="col-price">Price</div>
-                    <div className="col-quantity">Quantity</div>
-                    <div className="col-subtotal">Subtotal</div>
-                  </div>
-
-                  {cartItems.map((item) => (
-                    <div key={item.productId || item._id} className="cart-item">
-                      <div className="col-product">
+        <div className="cart-grid">
+          <div className="cart-items">
+            {cartItems.map((item) => (
+              <div key={item._id} className="cart-item">
+                <div className="cart-item-image">
+                  <div className="image-container">
+                    <div className="image-fallback">
+                      {item.image ? (
                         <img 
-                          src={item.image || 'https://via.placeholder.com/80x80/f5f3f0/3a3a3a?text=Product'} 
-                          alt={item.name} 
+                          src={item.image} 
+                          alt={item.name}
                           className="product-image"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
                         />
-                        <span className="product-name">{item.name}</span>
-                      </div>
-                      <div className="col-price">
-                        <span className="price">{formatPriceINR(item.price)}</span>
-                      </div>
-                      <div className="col-quantity">
-                        <div className="quantity-controls">
-                          <button 
-                            onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                            className="quantity-btn"
-                          >
-                            -
-                          </button>
-                          <span className="quantity-value">{item.quantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                            className="quantity-btn"
-                          >
-                            +
-                          </button>
+                      ) : (
+                        <div className="no-image">
+                          <span>No Image</span>
                         </div>
-                      </div>
-                      <div className="col-subtotal">
-                        <span className="subtotal">{formatPriceINR(item.price * item.quantity)}</span>
-                        <button 
-                          onClick={() => removeItem(item.productId)}
-                          className="remove-btn"
-                        >
-                          🗑️
-                        </button>
+                      )}
+                      <div className="no-image" style={{display: 'none'}}>
+                        <span>Image not available</span>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                </div>
+                <div className="cart-item-details">
+                  <div className="product-header">
+                    <h3 className="cart-item-title">{item.name}</h3>
+                    <span className="product-category">{item.category || 'Luxury Apparel'}</span>
+                  </div>
+                  
+                  <div className="product-meta">
+                    <div className="meta-item">
+                      <span className="meta-label">Product ID:</span>
+                      <span className="meta-value">{item._id?.substring(0, 8) || 'N/A'}</span>
+                    </div>
+                    {item.size && (
+                      <div className="meta-item">
+                        <span className="meta-label">Size:</span>
+                        <span className="meta-value">{item.size}</span>
+                      </div>
+                    )}
+                    {item.color && (
+                      <div className="meta-item">
+                        <span className="meta-label">Color:</span>
+                        <span className="meta-value">{item.color}</span>
+                      </div>
+                    )}
+                    <div className="meta-item">
+                      <span className="meta-label">Unit Price:</span>
+                      <span className="meta-value">{formatPriceINR(item.price || 0)}</span>
+                    </div>
+                  </div>
+
+                  <div className="product-actions">
+                    <div className="quantity-selector">
+                      <button 
+                        className="quantity-btn" 
+                        onClick={() => updateQuantity(item._id, (item.quantity || 1) - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        <FiMinus size={14} />
+                      </button>
+                      <span className="quantity-display">{item.quantity || 1}</span>
+                      <button 
+                        className="quantity-btn" 
+                        onClick={() => updateQuantity(item._id, (item.quantity || 1) + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        <FiPlus size={14} />
+                      </button>
+                    </div>
+                    <div className="action-buttons">
+                      <button className="wishlist-btn">
+                        <FiHeart size={16} /> Save for later
+                      </button>
+                      <button 
+                        className="remove-btn" 
+                        onClick={() => removeItem(item._id)}
+                      >
+                        <FiTrash2 size={16} /> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="cart-item-price">
+                  <div className="price-amount">
+                    {formatPriceINR((item.price || 0) * (item.quantity || 1))}
+                  </div>
+                  {item.quantity > 1 && (
+                    <div className="per-unit">
+                      {formatPriceINR(item.price || 0)} each
+                    </div>
+                  )}
+                  {item.inStock ? (
+                    <div className="stock-status in-stock">In Stock</div>
+                  ) : (
+                    <div className="stock-status out-of-stock">Out of Stock</div>
+                  )}
                 </div>
               </div>
+            ))}
+          </div>
 
-              <div className="cart-totals-section">
-                <div className="cart-totals">
-                  <h3>Cart Totals</h3>
-                  <div className="totals-row">
-                    <span>Subtotal:</span>
-                    <span>{formatPriceINR(calculateSubtotal())}</span>
-                  </div>
-                  <div className="totals-row total">
-                    <span>Total:</span>
-                    <span>{formatPriceINR(calculateTotal())}</span>
-                  </div>
-                  <button className="checkout-btn">
-                    Check Out
-                  </button>
-                </div>
-              </div>
+          <div className="cart-summary">
+            <h3 className="summary-title">Order Summary</h3>
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <span>{formatPriceINR(calculateSubtotal())}</span>
             </div>
-          ) : (
-            <div className="empty-cart">
-              <div className="empty-cart-content">
-                <h2>Your cart is empty</h2>
-                <p>Looks like you haven&apos;t added any items to your cart yet.</p>
-                <button className="continue-shopping-btn">
-                  Continue Shopping
-                </button>
-              </div>
+            <div className="summary-row">
+              <span>Shipping</span>
+              <span>Free</span>
             </div>
-          )}
-        </div>
-
-        <div className="features-section">
-          <div className="features-container">
-            <div className="feature-item">
-              <div className="feature-icon">🏆</div>
-              <div className="feature-content">
-                <h4>High Quality</h4>
-                <p>crafted from top materials</p>
-              </div>
+            <div className="summary-row">
+              <span>Tax</span>
+              <span>{formatPriceINR(calculateTax())}</span>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">✅</div>
-              <div className="feature-content">
-                <h4>Warranty Protection</h4>
-                <p>Over 2 years</p>
-              </div>
+            <div className="summary-total">
+              <span>Total</span>
+              <span>{formatPriceINR(calculateTotal())}</span>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">📦</div>
-              <div className="feature-content">
-                <h4>Free Shipping</h4>
-                <p>Order over 150 $</p>
-              </div>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">🎧</div>
-              <div className="feature-content">
-                <h4>24/7 Support</h4>
-                <p>Dedicated support</p>
-              </div>
-            </div>
+            <button className="checkout-btn">
+              Proceed to Checkout
+            </button>
+            <Link to="/" className="continue-shopping">
+              Continue Shopping
+            </Link>
           </div>
         </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 
