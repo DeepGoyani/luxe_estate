@@ -1,0 +1,249 @@
+:root {
+  --gender-bg: #f8f5f0;
+  --gender-panel: #fff;
+  --gender-border: rgba(17, 24, 39, 0.08);
+  --gender-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  --gender-chip: #ebe4d7;
+  --gender-chip-active: #1c1b1a;
+}
+
+.gender-page {
+  background: var(--gender-bg);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: #1b1b1b;
+}
+
+.gender-hero {
+  min-height: 380px;
+  display: flex;
+  align-items: flex-end;
+  padding: 3.5rem 2rem;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.gender-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.25));
+}
+
+.gender-hero-content {
+  position: relative;
+  max-width: 720px;
+  z-index: 1;
+  color: #fff;
+}
+
+.gender-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.gender-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 4vw, 3.75rem);
+  margin: 0 0 1rem 0;
+}
+
+.gender-hero p {
+  font-size: 1.1rem;
+  max-width: 48ch;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.gender-content {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.75rem;
+  max-width: 1500px;
+  margin: -4rem auto 4rem;
+  padding: 0 2rem;
+}
+
+.gender-filter-panel-toggle {
+  display: none;
+  margin-bottom: 1rem;
+}
+
+.filter-toggle-btn {
+  width: 100%;
+}
+
+.gender-filter-panel {
+  background: var(--gender-panel);
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid var(--gender-border);
+  box-shadow: var(--gender-shadow);
+  position: sticky;
+  top: 120px;
+  height: fit-content;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.gender-filter-panel.collapsed {
+  max-height: 0;
+  padding: 0 2rem;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.gender-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.gender-panel-header h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1.4rem;
+}
+
+.panel-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  color: #9a8c78;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid var(--gender-border);
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-chip {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  background: var(--gender-chip);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+}
+
+.filter-chip.active {
+  background: var(--gender-chip-active);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.filter-chip:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.filter-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #6b645c;
+}
+
+.filter-control select {
+  border: 1px solid var(--gender-border);
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  background: #fff;
+}
+
+.price-filter {
+  margin-top: 1.75rem;
+}
+
+.price-label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+
+.price-label small {
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #7a746c;
+  margin-top: 0.25rem;
+}
+
+.price-filter input[type='range'] {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.gender-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+  gap: 2.25rem;
+}
+
+.gender-empty-state {
+  background: #fff;
+  border-radius: 24px;
+  padding: 4rem;
+  border: 1px dashed var(--gender-border);
+  text-align: center;
+  font-size: 1.1rem;
+  color: #6b645c;
+}
+
+@media (max-width: 1100px) {
+  .gender-content {
+    grid-template-columns: 1fr;
+  }
+
+  .gender-filter-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .gender-content {
+    padding: 0 1.25rem;
+  }
+
+  .gender-filter-panel {
+    padding: 1.5rem;
+    border-radius: 18px;
+  }
+
+  .filter-chip {
+    width: 100%;
+    text-align: center;
+  }
+}
