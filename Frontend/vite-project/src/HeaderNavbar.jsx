@@ -41,14 +41,6 @@ const HeaderNavbar = ({ cart = [] }) => {
     setShowLanguageDropdown(false);
   };
 
-  // Scroll to section function
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   // Close dropdowns when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -68,12 +60,12 @@ const HeaderNavbar = ({ cart = [] }) => {
       </header>
       <nav className="navbar">
         <div className="nav-links">
-          <button className="nav-btn" onClick={() => scrollToSection('men')}>
+          <Link to="/men" className="nav-btn">
             Shop Men
-          </button>
-          <button className="nav-btn" onClick={() => scrollToSection('women')}>
+          </Link>
+          <Link to="/women" className="nav-btn">
             Shop Women
-          </button>
+          </Link>
           <Link to="/contactus" className="nav-btn" style={{ textDecoration: 'none', color: 'inherit' }}>
             Contact Us
           </Link>

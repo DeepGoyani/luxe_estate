@@ -112,6 +112,24 @@
   margin: 0 auto;
 }
 
+.product-section .gallery-card {
+  min-height: 250px;
+}
+
+.product-section .gallery-media {
+  aspect-ratio: 4 / 5;
+}
+
+.product-section .gallery-info {
+  padding: 0.5rem 0.75rem 0.75rem;
+  gap: 0.3rem;
+}
+
+.product-section .gallery-description {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
 .luxury-product-card {
   background: #fff;
   border: 1px solid #ece4cf;

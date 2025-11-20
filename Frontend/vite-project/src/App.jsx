@@ -6,9 +6,13 @@ import ContactPage from "./assets/Contactus/ContactUs";
 import LuxuryAuth from "./Signin/LuxuryAuth";
 import TshirtCollection from "./assets/T-Shirt/T-Shirt";
 import ShirtCollection from "./assets/Shirt/Shirt";
+import TrousersCollection from "./assets/Trousers/Trousers";
 import ExclusiveProducts from "./assets/Exclusive/Exclusive";
+import Mens from "./assets/Mens/Mens";
+import Womens from "./assets/Womens/Womens";
 import HeaderNavbar from "./HeaderNavbar";
 import Footer from "./Footer";
+import './assets/GenderCollection/GenderCollection.css';
 
 const App = () => {
   const [cart, setCart] = useState([]);
@@ -37,7 +41,10 @@ const App = () => {
           <Route path="/signin" element={<LuxuryAuth />} />
           <Route path="/tshirt" element={<TshirtCollection />} />
           <Route path="/shirt" element={<ShirtCollection />} />
+          <Route path="/trousers" element={<TrousersCollection />} />
           <Route path="/exclusive" element={<ExclusiveProducts />} />
+          <Route path="/men" element={<Mens />} />
+          <Route path="/women" element={<Womens />} />
         </Routes>
       </main>
       <Footer />

@@ -4,9 +4,10 @@ import axios from 'axios';
 import { useCurrency } from './context/CurrencyContext';
 import LuxeLoader from './components/LuxeLoader';
 import './Landing.css';
+import './assets/Collection/CollectionGallery.css';
 
 // Directly defined API URL (replace with your actual backend URL)
-const API_URL = 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 const ENABLE_CONVERSION_RATES = import.meta.env.VITE_ENABLE_CONVERSION_RATES === 'true';
 const INLINE_PLACEHOLDER =
   'data:image/svg+xml;utf8,' +
@@ -23,13 +24,14 @@ const MainComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
-  const [expandedCategories, setExpandedCategories] = useState({});
 
   const { formatPriceINR } = useCurrency();
 
   // Define valid product categories
   const CATEGORIES = ['men', 'women', 'tshirts', 'trousers', 'shirts'];
   const SHOP_ALL_ROUTES = {
+    men: '/men',
+    women: '/women',
     tshirts: '/tshirt',
     shirts: '/shirt',
     trousers: '/trousers'
@@ -83,7 +85,10 @@ const MainComponent = () => {
 
         // Transform products data
         const productsData = productsResponses.reduce((acc, { category, data }) => {
-          acc[category] = data;
+          acc[category] = data.map(item => ({
+            ...item,
+            categorySlug: category
+          }));
           return acc;
         }, {});
 
@@ -121,12 +126,8 @@ const MainComponent = () => {
     return value || fallback;
   };
 
-  const toggleCategoryView = (category) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
+  const getCategorySlug = (category = '') =>
+    typeof category === 'string' ? category.toLowerCase().replace(/\s+/g, '') : 'products';
 
   return (
     <div className="main">
@@ -165,123 +166,78 @@ const MainComponent = () => {
               </h2>
 
               <div className="product-grid">
-                {(expandedCategories[category] ? products[category] : products[category].slice(0, 4)).map(product => (
-                  <div key={product._id} className="luxury-product-card">
-                    <div className="luxury-product-image">
-                      <img
-                        src={product.image || INLINE_PLACEHOLDER}
-                        alt={product.name}
-                        onError={(e) => {
-                          e.target.src = INLINE_PLACEHOLDER;
-                        }}
-                      />
-                      <div className="product-badges">
-                        {product.newArrival && <span className="badge new-arrival">New</span>}
-                        {product.sale && <span className="badge sale-badge">Sale</span>}
-                        {!product.inStock && <span className="badge out-of-stock">Out</span>}
+                {(SHOP_ALL_ROUTES[category] ? products[category].slice(0, 4) : products[category]).map(product => {
+                  const slug = getCategorySlug(product.categorySlug || product.category || category);
+                  const detailLink = product._id ? `/product/${slug}/${product._id}` : null;
+                  const card = (
+                    <article className="gallery-card">
+                      <div className="gallery-media">
+                        <img
+                          src={product.image || INLINE_PLACEHOLDER}
+                          alt={product.name}
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.src = INLINE_PLACEHOLDER;
+                          }}
+                        />
+                        {(product.newArrival || product.sale || product.inStock === false) && (
+                          <div className="product-badges">
+                            {product.newArrival && <span className="badge new-arrival">New</span>}
+                            {product.sale && <span className="badge sale-badge">Sale</span>}
+                            {product.inStock === false && <span className="badge out-of-stock">Out</span>}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    
-                    <div className="luxury-product-info">
-                      <div className="product-heading">
-                        <span className="category-pill">{getDisplayCategory(product.category || category)}</span>
-                        {product.material && <span className="material-pill">{product.material}</span>}
-                      </div>
 
-                      <h3 className="product-name">{product.name}</h3>
-                      {product.description && (
-                        <p className="product-description">
-                          {product.description.length > 110 
-                            ? `${product.description.slice(0, 110)}…`
-                            : product.description}
-                        </p>
-                      )}
+                      <div className="gallery-info">
+                        <div className="gallery-pill-row">
+                          <span className="gallery-pill">{product.material || 'Premium Blend'}</span>
+                          <span className="gallery-pill">{getDisplayCategory(product.category || category)}</span>
+                        </div>
 
-                      <ul className="product-spec-list">
-                        <li>
-                          <span>Material</span>
-                          <strong>{product.material || 'Premium Blend'}</strong>
-                        </li>
-                        <li>
-                          <span>Sizes</span>
-                          <strong>{formatListPreview(product.size, 'XS-XXL')}</strong>
-                        </li>
-                        <li>
-                          <span>Colors</span>
-                          <strong>{formatListPreview(product.color, 'Curated Palette')}</strong>
-                        </li>
-                      </ul>
+                        <h3 className="gallery-name">{product.name}</h3>
+                        {product.description && (
+                          <p className="gallery-description">
+                            {product.description.length > 110
+                              ? `${product.description.slice(0, 110)}…`
+                              : product.description}
+                          </p>
+                        )}
 
-                      {Array.isArray(product.features) && product.features.length > 0 && (
-                        <ul className="feature-list">
-                          {product.features.slice(0, 2).map((feature, index) => (
-                            <li key={`${product._id}-feature-${index}`}>{feature}</li>
-                          ))}
-                        </ul>
-                      )}
-
-                      <div className="price-stack">
-                        <div>
-                          <p className="luxury-price">{formatPriceINR(product.price)}</p>
+                        <div className="gallery-price-row">
+                          <span className="gallery-price">{formatPriceINR(product.price)}</span>
                           {product.originalPrice && product.originalPrice > product.price && (
-                            <p className="original-price">{formatPriceINR(product.originalPrice)}</p>
+                            <span className="gallery-original">{formatPriceINR(product.originalPrice)}</span>
                           )}
                         </div>
-                        <div className="rating-chip">
+
+                        <div className="gallery-meta">
                           <span>★ {product.rating || 4.8}</span>
-                          {product.sale && product.originalPrice > product.price && (
-                            <small>
-                              -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
-                            </small>
-                          )}
+                          <span>{formatListPreview(product.size, 'XS-XXL')}</span>
                         </div>
                       </div>
+                    </article>
+                  );
 
-                      <div className="quantity-selector">
-                        <label htmlFor={`quantity-${product._id}`}>Qty</label>
-                        <select
-                          id={`quantity-${product._id}`}
-                          value={quantities[product._id] || 1}
-                          onChange={(e) => handleQuantityChange(product._id, e.target.value)}
-                          className="quantity-select"
-                        >
-                          {[...Array(10)].map((_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              {i + 1}
-                            </option>
-                          ))}
-                        </select>
-                        
-                        <button
-                          className="luxury-add-to-cart"
-                          onClick={() => addToCart(
-                            product._id, 
-                            category, 
-                            quantities[product._id] || 1
-                          )}
-                        >
-                          Add to Cart
-                        </button>
-                      </div>
+                  return detailLink ? (
+                    <Link key={product._id} to={detailLink} className="gallery-card-link">
+                      {card}
+                    </Link>
+                  ) : (
+                    <div key={product._id || product.name} className="gallery-card-link">
+                      {card}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              <div className="section-actions">
-                <button
-                  type="button"
-                  className="show-all-btn"
-                  onClick={() => toggleCategoryView(category)}
-                >
-                  {expandedCategories[category] ? 'Show Less' : 'Show All'}
-                </button>
-                {SHOP_ALL_ROUTES[category] && (
-                  <Link to={SHOP_ALL_ROUTES[category]} className="secondary-link">
-                    Visit full collection
+              {SHOP_ALL_ROUTES[category] && (
+                <div className="section-actions">
+                  <Link to={SHOP_ALL_ROUTES[category]} className="show-all-btn">
+                    Show All
                   </Link>
-                )}
-              </div>
+                </div>
+              )}
             </section>
           )
         ))
