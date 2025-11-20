@@ -16,15 +16,29 @@
 - **State Management**: React Hooks (useState, useEffect)  
 - **API Handling**: Axios  
 
+## **Contact & Socials**  
+📧 **Email**: deepgoyani77@gmail.com 
+🔗 **LinkedIn**: [Deep Goyani(https://www.linkedin.com/in/deepgoyani/)  
+## **Deployments**
+- 🌐 **Frontend (Vercel)**: https://luxe-estate-theta.vercel.app/
+- ⚙️ **Backend (Render)**: https://luxe-estate-4.onrender.com/
+
+### Environment Setup
+Create a `.env` file inside `Frontend/vite-project` (or update `.env` if it exists) to point the app to the deployed backend:
+
+```
+VITE_API_BASE_URL=https://luxe-estate-4.onrender.com/api
+VITE_ENABLE_CONVERSION_RATES=false
+```
+
+> Enable conversion rates by setting `VITE_ENABLE_CONVERSION_RATES=true` if the `/api/conversion-rates` endpoint is available in production.
+
 ## **API Documentation**  
 📖 View the full API documentation **https://documenter.getpostman.com/view/39216507/2sAYdbPYVv**.
 
 ## **Figma Design**  
 🎨 Check out the **Figma UI/UX design** **https://www.figma.com/design/8idhJAd1WOXAiQWHxvZPci/Kreep?node-id=110-1485&t=RT2QWcnHsCjIt9Yp-1**.
 
-## **Contact & Socials**  
-📧 **Email**: deepgoyani77@gmail.com 
-🔗 **LinkedIn**: [Deep Goyani(https://www.linkedin.com/in/deepgoyani/)  
-🌎 **Live Demo**: [The Luxe Estate](https://portfolio1-n5j4.onrender.com/)  
+🌎 **Live Demo**: [The Luxe Estate](https://luxe-estate-theta.vercel.app/)  
 
 ⭐ _If you found this project useful, give it a star!_ ⭐  
