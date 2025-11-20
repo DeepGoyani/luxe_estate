@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import HeaderNavbar from './HeaderNavbar';
-import Footer from './Footer';
+import { useCurrency } from './context/CurrencyContext';
+import LuxeLoader from './components/LuxeLoader';
 import './Landing.css';
 
 // Directly defined API URL (replace with your actual backend URL)
@@ -11,12 +11,10 @@ const API_URL = 'http://localhost:3000/api';
 const MainComponent = () => {
   const [products, setProducts] = useState({});
   const [cart, setCart] = useState([]);
-  const [currency, setCurrency] = useState('INR');
-  const [language, setLanguage] = useState('English');
-  const [conversionRates, setConversionRates] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
+  const { formatPriceINR } = useCurrency();
 
   // Define valid product categories
   const CATEGORIES = ['men', 'women', 'tshirts', 'trousers', 'shirts'];
@@ -69,10 +67,9 @@ const MainComponent = () => {
 
         setProducts(productsData);
         setCart(cartResponse.data.items || []);
-        setConversionRates(ratesResponse.data);
         setError(null);
       } catch (err) {
-        console.error('Error   data:', err);
+        console.error('Error fetching data:', err);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
@@ -82,16 +79,24 @@ const MainComponent = () => {
     fetchData();
   }, []);
 
-  const convertPrice = (price, currency) => {
-    if (currency === 'INR' || !conversionRates[currency]) return price;
-    return (price * conversionRates[currency]).toFixed(2);
-  };
+  // formatPriceINR is already imported from useCurrency
 
   const handleQuantityChange = (productId, value) => {
     setQuantities(prev => ({
       ...prev,
       [productId]: Math.max(1, Math.min(10, Number(value)))
     }));
+  };
+
+  const getDisplayCategory = (category) =>
+    category.charAt(0).toUpperCase() + category.slice(1);
+
+  const formatListPreview = (value, fallback) => {
+    if (Array.isArray(value) && value.length > 0) {
+      const preview = value.slice(0, 3).join(' • ');
+      return value.length > 3 ? `${preview} +` : preview;
+    }
+    return value || fallback;
   };
 
   const getShopAllLink = (category) => {
@@ -105,13 +110,7 @@ const MainComponent = () => {
 
   return (
     <div className="main">
-      <HeaderNavbar
-        currency={currency}
-        setCurrency={setCurrency}
-        language={language}
-        setLanguage={setLanguage}
-        cart={cart}
-      />
+      {/* Header is now managed in App.jsx */}
 
       {error && (
         <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
@@ -134,13 +133,13 @@ const MainComponent = () => {
       </section>
 
       {loading ? (
-        <div className="loading-spinner">Loading products...</div>
+        <LuxeLoader message="Curating the Luxe wardrobe..." />
       ) : (
         CATEGORIES.map(category => (
           products[category]?.length > 0 && (
             <section key={category} id={category} className="product-section">
               <h2 className="collection-title">
-                {category.charAt(0).toUpperCase() + category.slice(1)} Collection
+                {getDisplayCategory(category)} Collection
               </h2>
               
               <div className="product-grid">
@@ -154,25 +153,70 @@ const MainComponent = () => {
                           e.target.src = 'https://via.placeholder.com/150';
                         }}
                       />
-                      {product.sale && <span className="sale-tag">Sale</span>}
+                      <div className="product-badges">
+                        {product.newArrival && <span className="badge new-arrival">New</span>}
+                        {product.sale && <span className="badge sale-badge">Sale</span>}
+                        {!product.inStock && <span className="badge out-of-stock">Out</span>}
+                      </div>
                     </div>
                     
                     <div className="luxury-product-info">
+                      <div className="product-heading">
+                        <span className="category-pill">{getDisplayCategory(product.category || category)}</span>
+                        {product.material && <span className="material-pill">{product.material}</span>}
+                      </div>
+
                       <h3 className="product-name">{product.name}</h3>
-                      <p className="luxury-rating">
-                        {Array.from(
-                          { length: Math.floor(product.rating || 0) },
-                          (_, i) => (
-                            <span key={i}>⭐</span>
-                          )
-                        )}
-                      </p>
-                      <p className="luxury-price">
-                        {currency} {convertPrice(product.price, currency)}
-                      </p>
-                      
+                      {product.description && (
+                        <p className="product-description">
+                          {product.description.length > 110 
+                            ? `${product.description.slice(0, 110)}…`
+                            : product.description}
+                        </p>
+                      )}
+
+                      <ul className="product-spec-list">
+                        <li>
+                          <span>Material</span>
+                          <strong>{product.material || 'Premium Blend'}</strong>
+                        </li>
+                        <li>
+                          <span>Sizes</span>
+                          <strong>{formatListPreview(product.size, 'XS-XXL')}</strong>
+                        </li>
+                        <li>
+                          <span>Colors</span>
+                          <strong>{formatListPreview(product.color, 'Curated Palette')}</strong>
+                        </li>
+                      </ul>
+
+                      {Array.isArray(product.features) && product.features.length > 0 && (
+                        <ul className="feature-list">
+                          {product.features.slice(0, 2).map((feature, index) => (
+                            <li key={`${product._id}-feature-${index}`}>{feature}</li>
+                          ))}
+                        </ul>
+                      )}
+
+                      <div className="price-stack">
+                        <div>
+                          <p className="luxury-price">{formatPriceINR(product.price)}</p>
+                          {product.originalPrice && product.originalPrice > product.price && (
+                            <p className="original-price">{formatPriceINR(product.originalPrice)}</p>
+                          )}
+                        </div>
+                        <div className="rating-chip">
+                          <span>★ {product.rating || 4.8}</span>
+                          {product.sale && product.originalPrice > product.price && (
+                            <small>
+                              -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                            </small>
+                          )}
+                        </div>
+                      </div>
+
                       <div className="quantity-selector">
-                        <label htmlFor={`quantity-${product._id}`}>Quantity:</label>
+                        <label htmlFor={`quantity-${product._id}`}>Qty</label>
                         <select
                           id={`quantity-${product._id}`}
                           value={quantities[product._id] || 1}
@@ -208,7 +252,6 @@ const MainComponent = () => {
         ))
       )}
       
-      <Footer />
     </div>
   );
 };
