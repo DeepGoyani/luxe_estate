@@ -23,6 +23,8 @@ const MainComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
+  const [expandedCategories, setExpandedCategories] = useState({});
+
   const { formatPriceINR } = useCurrency();
 
   // Define valid product categories
@@ -119,13 +121,11 @@ const MainComponent = () => {
     return value || fallback;
   };
 
-  const getShopAllLink = (category) => {
-    const route = SHOP_ALL_ROUTES[category];
-    return route ? (
-      <Link to={route} className="show-all-btn">Shop All</Link>
-    ) : (
-      <button className="show-all-btn">Shop All</button>
-    );
+  const toggleCategoryView = (category) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
   };
 
   return (
@@ -163,9 +163,9 @@ const MainComponent = () => {
               <h2 className="collection-title">
                 {getDisplayCategory(category)} Collection
               </h2>
-              
+
               <div className="product-grid">
-                {products[category].map(product => (
+                {(expandedCategories[category] ? products[category] : products[category].slice(0, 4)).map(product => (
                   <div key={product._id} className="luxury-product-card">
                     <div className="luxury-product-image">
                       <img
@@ -268,7 +268,20 @@ const MainComponent = () => {
                 ))}
               </div>
 
-              {getShopAllLink(category)}
+              <div className="section-actions">
+                <button
+                  type="button"
+                  className="show-all-btn"
+                  onClick={() => toggleCategoryView(category)}
+                >
+                  {expandedCategories[category] ? 'Show Less' : 'Show All'}
+                </button>
+                {SHOP_ALL_ROUTES[category] && (
+                  <Link to={SHOP_ALL_ROUTES[category]} className="secondary-link">
+                    Visit full collection
+                  </Link>
+                )}
+              </div>
             </section>
           )
         ))
