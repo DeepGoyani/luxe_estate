@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import '../Collection/CollectionGallery.css';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1400&q=80';
 
@@ -18,9 +18,9 @@ const formatListPreview = (value, fallback = 'Tailored Fit') => {
 
 export default function Trousers() {
   const navigate = useNavigate();
-  const materials = ['Wool-Silk', 'Tech Cotton', 'Linen', 'Velvet'];
-  const [selectedMaterial, setSelectedMaterial] = useState('Wool-Silk');
-  const [products, setProducts] = useState([]);
+  const [selectedMaterial, setSelectedMaterial] = useState('All fabrics');
+  const [allProducts, setAllProducts] = useState([]);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { formatPriceINR } = useCurrency();
@@ -28,10 +28,12 @@ export default function Trousers() {
   useEffect(() => {
     const fetchTrousers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/trousers`, {
-          params: { material: selectedMaterial },
-        });
-        setProducts(Array.isArray(res.data) ? res.data : []);
+        setLoading(true);
+        setError(null);
+        const res = await axios.get(`${API_URL}/trousers`);
+        const data = Array.isArray(res.data) ? res.data : [];
+        setAllProducts(data);
+        setDisplayedProducts(data);
       } catch (e) {
         setError('Failed to load trousers.');
       } finally {
@@ -40,6 +42,28 @@ export default function Trousers() {
     };
     fetchTrousers();
   }, []);
+
+  useEffect(() => {
+    if (selectedMaterial === 'All fabrics') {
+      setDisplayedProducts(allProducts);
+    } else {
+      setDisplayedProducts(
+        allProducts.filter(
+          (product) => product.material?.toLowerCase() === selectedMaterial.toLowerCase()
+        )
+      );
+    }
+  }, [selectedMaterial, allProducts]);
+
+  const materials = useMemo(() => {
+    const unique = new Set();
+    allProducts.forEach((product) => {
+      if (product.material) {
+        unique.add(product.material.trim());
+      }
+    });
+    return ['All fabrics', ...Array.from(unique).sort((a, b) => a.localeCompare(b))];
+  }, [allProducts]);
 
   if (loading) {
     return (
@@ -83,9 +107,9 @@ export default function Trousers() {
           ))}
         </div>
 
-        {products.length ? (
+        {displayedProducts.length ? (
           <div className="collection-grid">
-            {products.map((product) => (
+            {displayedProducts.map((product) => (
               <article
                 key={product._id}
                 className="gallery-card"
