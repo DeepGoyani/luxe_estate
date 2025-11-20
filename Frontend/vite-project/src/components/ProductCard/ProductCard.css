@@ -1,13 +1,15 @@
+
 .product-card {
   position: relative;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 18px;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
   height: 100%;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(229, 231, 235, 0.6);
 }
 
 .product-card:hover {
@@ -18,7 +20,7 @@
 .product-image-container {
   position: relative;
   width: 100%;
-  padding-top: 125%; /* 4:5 aspect ratio */
+  padding-top: 90%;
   overflow: hidden;
   background: #f9f9f9;
 }
@@ -140,25 +142,44 @@
 }
 
 .product-details {
-  padding: 1.25rem;
+  padding: 1.15rem 1.25rem 1.5rem;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 0.85rem;
+  background: linear-gradient(180deg, #fff, #fdfaf6);
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.product-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .product-category {
-  font-size: 0.8rem;
-  color: #8b8b8b;
+  font-size: 0.72rem;
+  color: #78716c;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.4em;
+}
+
+.product-pill {
+  font-size: 0.72rem;
+  color: #1c1917;
+  background: #f5f1eb;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
 }
 
 .product-title {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  line-height: 1.4;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .product-title a {
@@ -171,12 +192,43 @@
   color: #4a4a4a;
 }
 
+.product-summary {
+  font-size: 0.88rem;
+  color: #4b5563;
+  line-height: 1.5;
+  min-height: 2.5rem;
+}
+
+.product-meta-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: #78716c;
+}
+
+.product-meta-list span {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.65rem;
+}
+
+.product-meta-list strong {
+  font-size: 0.85rem;
+  color: #1c1917;
+}
+
 .product-price {
   margin-top: auto;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  justify-content: space-between;
+  padding-top: 0.5rem;
 }
 
 .current-price {
@@ -187,8 +239,8 @@
 }
 
 .original-price {
-  font-size: 0.9rem;
-  color: #8b8b8b;
+  font-size: 0.85rem;
+  color: #a8a29e;
   text-decoration: line-through;
 }
 
