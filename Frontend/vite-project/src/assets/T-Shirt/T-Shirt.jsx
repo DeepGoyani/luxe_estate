@@ -1,22 +1,41 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import "./T-Shirt.css";
-import HeaderNavbar from "../../HeaderNavbar";
-import Footer from "../../Footer";
+import "../Collection/CollectionGallery.css";
+import { useCurrency } from "../../context/CurrencyContext";
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1400&q=80";
+const API_URL = "http://localhost:3000/api";
+
+const formatListPreview = (value) => {
+  if (Array.isArray(value) && value.length) {
+    const preview = value.slice(0, 3).join(" • ");
+    return value.length > 3 ? `${preview} +` : preview;
+  }
+  return value || "XS-XXL";
+};
 
 export default function TshirtCollection() {
   const materials = ["Cashmere", "Merino Wool", "Alpaca Wool", "Linen"];
   const [tshirtData, setTshirtData] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(materials[0]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { formatPriceINR } = useCurrency();
 
   useEffect(() => {
     const fetchTshirts = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/tshirts?material=${encodeURIComponent(selectedMaterial)}`);
-        const data = await response.json();
-        setTshirtData(data);
-      } catch (error) {
-        console.error("Error fetching T-shirts:", error);
+        setIsLoading(true);
+        setError(null);
+        const { data } = await axios.get(`${API_URL}/tshirts`, {
+          params: { material: selectedMaterial },
+        });
+        setTshirtData(Array.isArray(data) ? data : []);
+      } catch (fetchError) {
+        console.error("Error fetching T-shirts:", fetchError);
+        setError("Unable to load luxury T-shirt inventory.");
       } finally {
         setIsLoading(false);
       }
@@ -26,51 +45,94 @@ export default function TshirtCollection() {
   }, [selectedMaterial]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="page-loader">
+        <div className="luxe-ring">
+          <div className="luxe-initials">LE</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="empty-state">{error}</div>;
   }
 
   return (
-    <div className="app">
-      <HeaderNavbar />
+    <div className="collection-page tshirt-collection">
+      <section
+        className="collection-hero"
+        style={{ "--hero-image": `url(${HERO_IMAGE})` }}
+      >
+        <div className="collection-hero-content">
+          <span className="collection-eyebrow">Luxe Estate</span>
+          <h1 className="collection-title">Curated T-Shirt Atelier</h1>
+          <p className="collection-subtitle">
+            Breathable silhouettes and couture finishes crafted in premium cotton, silk
+            blends, and elevated knits.
+          </p>
+        </div>
+      </section>
 
-      {/* Main Content */}
-      <main className="main-content">
-        <h2 className="collection-title">T-Shirt Collection</h2>
-
-        {/* Material Filter */}
-        <div className="material-filter">
+      <section className="collection-content">
+        <div className="filter-toolbar">
           {materials.map((material) => (
             <button
               key={material}
               onClick={() => setSelectedMaterial(material)}
-              className={selectedMaterial === material ? "active" : ""}
+              className={`filter-chip ${selectedMaterial === material ? "active" : ""}`}
             >
               {material}
             </button>
           ))}
         </div>
 
-        {/* Product Sections */}
-        <section className="product-section">
-          <h3 className="material-title">{selectedMaterial} Material</h3>
-          <div className="product-grid">
-            {Array.isArray(tshirtData) && tshirtData.length > 0 ? (
-              tshirtData.map((tshirt, index) => (
-                <div key={index} className="product-card">
-                  <img src={tshirt.image} alt={tshirt.name} className="product-image" />
-                  <div className="product-tag">{tshirt.newArrival ? "NEW" : "TRENDING"}</div>
-                  <p className="product-name">{tshirt.name}</p>
-                  <p className="product-price">${tshirt.price}</p>
+        {tshirtData.length ? (
+          <div className="collection-grid">
+            {tshirtData.map((tshirt) => (
+              <article key={tshirt._id || tshirt.name} className="gallery-card">
+                <div className="gallery-media">
+                  <img
+                    src={tshirt.image || "https://via.placeholder.com/400x500?text=Luxe+Tee"}
+                    alt={tshirt.name}
+                    loading="lazy"
+                  />
+                  {(tshirt.newArrival || tshirt.sale) && (
+                    <span className="gallery-badge">{tshirt.newArrival ? "New" : "Sale"}</span>
+                  )}
                 </div>
-              ))
-            ) : (
-              <p>No products found.</p>
-            )}
-          </div>
-        </section>
-      </main>
 
-      <Footer />
+                <div className="gallery-info">
+                  <div className="gallery-pill-row">
+                    <span className="gallery-pill">{tshirt.material || selectedMaterial}</span>
+                    <span className="gallery-pill">Tailored</span>
+                  </div>
+                  <h3 className="gallery-name">{tshirt.name}</h3>
+                  {tshirt.description && (
+                    <p className="gallery-description">{tshirt.description}</p>
+                  )}
+
+                  <div className="gallery-price-row">
+                    <span className="gallery-price">{formatPriceINR(tshirt.price)}</span>
+                    {tshirt.originalPrice && tshirt.originalPrice > tshirt.price && (
+                      <span className="gallery-original">{formatPriceINR(tshirt.originalPrice)}</span>
+                    )}
+                  </div>
+
+                  <div className="gallery-meta">
+                    <span>★ {tshirt.rating || 4.8}</span>
+                    <span>{formatListPreview(tshirt.size)}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">
+            No {selectedMaterial.toLowerCase()} T-shirts available right now.
+          </div>
+        )}
+      </section>
     </div>
   );
 }
