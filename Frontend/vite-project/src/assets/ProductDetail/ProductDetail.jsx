@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FiShoppingCart, FiHeart, FiShare2, FiCheck, FiPlus, FiMinus } from 'react-icons/fi';
-import { BsArrowLeft } from 'react-icons/bs';
-import HeaderNavbar from '../../HeaderNavbar';
-import Footer from '../../Footer';
+import { FiShoppingCart, FiHeart, FiShare2, FiPlus, FiMinus, FiEye } from 'react-icons/fi';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import './ProductDetail.css';
+
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 const ProductDetail = () => {
   const { category, productId } = useParams();
@@ -14,29 +13,47 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedSize, setSelectedSize] = useState('L');
-  const [selectedColor, setSelectedColor] = useState('purple');
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const { formatPriceINR } = useCurrency();
-
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
-  const colors = [
-    { name: 'purple', value: '#8b5cf6' },
-    { name: 'black', value: '#000000' },
-    { name: 'gold', value: '#d97706' }
-  ];
 
   useEffect(() => {
     fetchProduct();
     fetchRelatedProducts();
   }, [category, productId]);
 
+  // Auto-play carousel
+  useEffect(() => {
+    if (isAutoPlaying && product && product.images && product.images.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => 
+          prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 3000); // Change image every 3 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [isAutoPlaying, product]);
+
+  const handleImageChange = (index) => {
+    setCurrentImageIndex(index);
+    setIsAutoPlaying(false); // Stop auto-play when user manually changes image
+  };
+
+  const toggleAutoPlay = () => {
+    setIsAutoPlaying(!isAutoPlaying);
+  };
+
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/${category}/${productId}`);
+      console.log('Fetching product:', `${API_URL}/${category}/${productId}`);
+      const response = await axios.get(`${API_URL}/${category}/${productId}`);
+      console.log('Product response:', response.data);
       setProduct(response.data);
     } catch (err) {
+      console.error('Error fetching product:', err);
       setError('Product not found');
     } finally {
       setLoading(false);
@@ -45,7 +62,7 @@ const ProductDetail = () => {
 
   const fetchRelatedProducts = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/${category}`);
+      const response = await axios.get(`${API_URL}/${category}`);
       setRelatedProducts(response.data.slice(0, 4));
     } catch (err) {
       console.error('Error fetching related products:', err);
@@ -54,7 +71,7 @@ const ProductDetail = () => {
 
   const addToCart = async () => {
     try {
-      await axios.post('http://localhost:3000/api/cart', {
+      await axios.post(`${API_URL}/cart`, {
         productId,
         category,
         quantity
@@ -74,50 +91,46 @@ const ProductDetail = () => {
   };
 
   if (loading) {
+    console.log('Loading state:', loading);
     return (
-      <>
-        <HeaderNavbar />
-        <div className="product-detail-page">
-          <div className="page-loader">
-            <div className="luxe-ring">
-              <div className="luxe-initials">LE</div>
-            </div>
+      <div className="product-detail-page">
+        <div className="page-loader">
+          <div className="luxe-ring">
+            <div className="luxe-initials">LE</div>
           </div>
         </div>
-        <Footer />
-      </>
+      </div>
     );
   }
 
   if (error || !product) {
+    console.log('Error state:', error, 'Product state:', product);
     return (
-      <>
-        <HeaderNavbar />
-        <div className="product-detail-page">
-          <div className="error-message">
-            <h2>Product not found</h2>
-            <p>The product you're looking for doesn't exist.</p>
-            <button onClick={() => navigate('/')} className="btn-primary">
-              Go Back Home
-            </button>
-          </div>
+      <div className="product-detail-page">
+        <div className="error-message">
+          <h2>Product not found</h2>
+          <p>The product you're looking for doesn't exist.</p>
+          <button onClick={() => navigate('/')} className="btn-primary">
+            Go Back Home
+          </button>
         </div>
-        <Footer />
-      </>
+      </div>
     );
   }
 
+  console.log('Rendering product:', product);
+
   return (
     <>
-      <HeaderNavbar />
       <div className="product-detail-page">
         <div className="product-detail-container">
           <div className="product-detail-content">
             <div className="product-image-section">
               <img 
-                src={product.image || 'https://via.placeholder.com/500x600/f5f3f0/3a3a3a?text=Product'} 
+                src={product.image || 'https://via.placeholder.com/400x500?text=Luxe+Product'} 
                 alt={product.name}
                 className="product-main-image"
+                loading="lazy"
               />
             </div>
 
@@ -169,63 +182,41 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="product-options">
-                <div className="size-selection">
-                  <label>Size</label>
-                  <div className="size-buttons">
-                    {sizes.map(size => (
-                      <button
-                        key={size}
-                        className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
-                        onClick={() => setSelectedSize(size)}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="color-selection">
-                  <label>Color</label>
-                  <div className="color-swatches">
-                    {colors.map(color => (
-                      <button
-                        key={color.name}
-                        className={`color-swatch ${selectedColor === color.name ? 'selected' : ''}`}
-                        style={{ backgroundColor: color.value }}
-                        onClick={() => setSelectedColor(color.name)}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="quantity-selection">
+              <div className="product-actions">
+                <div className="quantity-selector">
                   <label>Quantity</label>
                   <div className="quantity-controls">
                     <button 
+                      className="quantity-btn" 
                       onClick={() => handleQuantityChange(-1)}
-                      className="quantity-btn"
+                      disabled={quantity <= 1}
                     >
-                      -
+                      <FiMinus />
                     </button>
                     <span className="quantity-value">{quantity}</span>
                     <button 
+                      className="quantity-btn" 
                       onClick={() => handleQuantityChange(1)}
-                      className="quantity-btn"
+                      disabled={quantity >= 10}
                     >
-                      +
+                      <FiPlus />
                     </button>
                   </div>
                 </div>
-              </div>
 
-              <button 
-                className={`add-to-cart-btn ${!product.inStock ? 'disabled' : ''}`}
-                onClick={() => product.inStock && addToCart()}
-                disabled={!product.inStock}
-              >
-                {!product.inStock ? 'Out of Stock' : 'Add To Cart'}
-              </button>
+                <div className="action-buttons">
+                  <button className="add-to-cart-btn" onClick={addToCart}>
+                    <FiShoppingCart size={18} />
+                    Add to Cart
+                  </button>
+                  <button className="wishlist-btn">
+                    <FiHeart size={18} />
+                  </button>
+                  <button className="share-btn">
+                    <FiShare2 size={18} />
+                  </button>
+                </div>
+              </div>
 
               <div className="product-meta">
                 <div className="meta-item">
@@ -269,83 +260,30 @@ const ProductDetail = () => {
               <div className="section-divider"></div>
             </div>
             <div className="related-products-grid">
-              {relatedProducts.map(relatedProduct => (
-                <div key={relatedProduct._id} className="related-product-card">
-                  <div className="product-image-container">
-                    <Link to={`/product/${relatedProduct.category}/${relatedProduct._id}`} className="product-image-link">
-                      <div className="image-fallback">
-                        <img 
-                          src={relatedProduct.images?.[0] || 'https://via.placeholder.com/300x400/f5f3f0/3a3a3a?text=Product+Image'} 
-                          alt={relatedProduct.name}
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextElementSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div className="no-image" style={{display: 'none'}}>
-                          <span>Image not available</span>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="product-actions">
-                      <button className="action-btn wishlist-btn">
-                        <FiHeart size={18} />
-                      </button>
-                      <button className="action-btn cart-btn">
-                        <FiShoppingCart size={18} />
-                      </button>
-                      <Link 
-                        to={`/product/${relatedProduct.category}/${relatedProduct._id}`} 
-                        className="action-btn view-btn"
-                      >
-                        <FiEye size={18} />
-                      </Link>
+              {relatedProducts.map(relatedProduct => {
+                const categorySlug = relatedProduct.category?.toLowerCase().replace(/\s+/g, '') || 'products';
+                const detailLink = `/product/${categorySlug}/${relatedProduct._id}`;
+                
+                return (
+                  <Link key={relatedProduct._id} to={detailLink} className="related-product-card">
+                    <div className="related-product-image">
+                      <img 
+                        src={relatedProduct.image || 'https://via.placeholder.com/300x400?text=Luxe+Product'} 
+                        alt={relatedProduct.name}
+                        loading="lazy"
+                      />
+                      {relatedProduct.newArrival && <span className="related-badge">New</span>}
                     </div>
-                    {relatedProduct.discount > 0 && (
-                      <div className="discount-badge">
-                        -{relatedProduct.discount}%
+                    <div className="related-product-info">
+                      <h4>{relatedProduct.name}</h4>
+                      <p className="related-price">{formatPriceINR(relatedProduct.price)}</p>
+                      <div className="related-rating">
+                        ★ {relatedProduct.rating || 4.8}
                       </div>
-                    )}
-                  </div>
-                  <div className="product-details">
-                    <div className="product-category">{relatedProduct.category || 'Luxury Apparel'}</div>
-                    <h3 className="product-title">
-                      <Link to={`/product/${relatedProduct.category}/${relatedProduct._id}`}>
-                        {relatedProduct.name}
-                      </Link>
-                    </h3>
-                    <div className="product-price">
-                      {relatedProduct.discount > 0 ? (
-                        <>
-                          <span className="current-price">
-                            {formatPriceINR(relatedProduct.price * (1 - relatedProduct.discount / 100))}
-                          </span>
-                          <span className="original-price">
-                            {formatPriceINR(relatedProduct.price)}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="current-price">
-                          {formatPriceINR(relatedProduct.price)}
-                        </span>
-                      )}
                     </div>
-                    {relatedProduct.rating && (
-                      <div className="product-rating">
-                        {[...Array(5)].map((_, i) => (
-                          <span 
-                            key={i} 
-                            className={`star ${i < Math.round(relatedProduct.rating) ? 'filled' : ''}`}
-                          >
-                            ★
-                          </span>
-                        ))}
-                        <span className="rating-count">({relatedProduct.ratingCount || 0})</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
             <div className="view-all-container">
               <Link to={`/category/${category}`} className="view-all-btn">
@@ -355,7 +293,6 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };
