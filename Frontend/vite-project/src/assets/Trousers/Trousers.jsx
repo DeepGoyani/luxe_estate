@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import '../Collection/CollectionGallery.css';
@@ -109,48 +109,56 @@ export default function Trousers() {
 
         {displayedProducts.length ? (
           <div className="collection-grid">
-            {displayedProducts.map((product) => (
-              <article
-                key={product._id}
-                className="gallery-card"
-                onClick={() => navigate(`/product/trousers/${product._id}`)}
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="gallery-media">
-                  <img
-                    src={product.image || 'https://via.placeholder.com/400x500?text=Luxe+Trousers'}
-                    alt={product.name}
-                    loading="lazy"
-                  />
-                  {(product.newArrival || product.sale) && (
-                    <span className="gallery-badge">{product.newArrival ? 'New' : 'Sale'}</span>
-                  )}
-                </div>
-
-                <div className="gallery-info">
-                  <div className="gallery-pill-row">
-                    <span className="gallery-pill">{product.material || selectedMaterial}</span>
-                    <span className="gallery-pill">{product.category || 'Tailored'}</span>
-                  </div>
-                  <h3 className="gallery-name">{product.name}</h3>
-                  {product.description && (
-                    <p className="gallery-description">{product.description}</p>
-                  )}
-
-                  <div className="gallery-price-row">
-                    <span className="gallery-price">{formatPriceINR(product.price)}</span>
-                    {product.originalPrice && product.originalPrice > product.price && (
-                      <span className="gallery-original">{formatPriceINR(product.originalPrice)}</span>
+            {displayedProducts.map((product) => {
+              const detailLink = product._id ? `/product/trousers/${product._id}` : null;
+              const card = (
+                <article className="gallery-card">
+                  <div className="gallery-media">
+                    <img
+                      src={product.image || 'https://via.placeholder.com/400x500?text=Luxe+Trousers'}
+                      alt={product.name}
+                      loading="lazy"
+                    />
+                    {(product.newArrival || product.sale) && (
+                      <span className="gallery-badge">{product.newArrival ? 'New' : 'Sale'}</span>
                     )}
                   </div>
 
-                  <div className="gallery-meta">
-                    <span>★ {product.rating || 4.8}</span>
-                    <span>{formatListPreview(product.sizeRange || product.size)}</span>
+                  <div className="gallery-info">
+                    <div className="gallery-pill-row">
+                      <span className="gallery-pill">{product.material || selectedMaterial}</span>
+                      <span className="gallery-pill">{product.category || 'Tailored'}</span>
+                    </div>
+                    <h3 className="gallery-name">{product.name}</h3>
+                    {product.description && (
+                      <p className="gallery-description">{product.description}</p>
+                    )}
+
+                    <div className="gallery-price-row">
+                      <span className="gallery-price">{formatPriceINR(product.price)}</span>
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <span className="gallery-original">{formatPriceINR(product.originalPrice)}</span>
+                      )}
+                    </div>
+
+                    <div className="gallery-meta">
+                      <span>★ {product.rating || 4.8}</span>
+                      <span>{formatListPreview(product.sizeRange || product.size)}</span>
+                    </div>
                   </div>
+                </article>
+              );
+
+              return detailLink ? (
+                <Link key={product._id} to={detailLink} className="gallery-card-link">
+                  {card}
+                </Link>
+              ) : (
+                <div key={product._id || product.name} className="gallery-card-link">
+                  {card}
                 </div>
-              </article>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="empty-state">No trousers found at the moment.</div>
