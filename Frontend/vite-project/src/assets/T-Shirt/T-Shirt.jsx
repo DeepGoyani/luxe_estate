@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import "./T-Shirt.css";
 import "../Collection/CollectionGallery.css";
@@ -6,7 +7,8 @@ import { useCurrency } from "../../context/CurrencyContext";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1400&q=80";
-const API_URL = "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+const CATEGORY_SLUG = "tshirts";
 
 const formatListPreview = (value) => {
   if (Array.isArray(value) && value.length) {
@@ -89,43 +91,56 @@ export default function TshirtCollection() {
 
         {tshirtData.length ? (
           <div className="collection-grid">
-            {tshirtData.map((tshirt) => (
-              <article key={tshirt._id || tshirt.name} className="gallery-card">
-                <div className="gallery-media">
-                  <img
-                    src={tshirt.image || "https://via.placeholder.com/400x500?text=Luxe+Tee"}
-                    alt={tshirt.name}
-                    loading="lazy"
-                  />
-                  {(tshirt.newArrival || tshirt.sale) && (
-                    <span className="gallery-badge">{tshirt.newArrival ? "New" : "Sale"}</span>
-                  )}
-                </div>
-
-                <div className="gallery-info">
-                  <div className="gallery-pill-row">
-                    <span className="gallery-pill">{tshirt.material || selectedMaterial}</span>
-                    <span className="gallery-pill">Tailored</span>
-                  </div>
-                  <h3 className="gallery-name">{tshirt.name}</h3>
-                  {tshirt.description && (
-                    <p className="gallery-description">{tshirt.description}</p>
-                  )}
-
-                  <div className="gallery-price-row">
-                    <span className="gallery-price">{formatPriceINR(tshirt.price)}</span>
-                    {tshirt.originalPrice && tshirt.originalPrice > tshirt.price && (
-                      <span className="gallery-original">{formatPriceINR(tshirt.originalPrice)}</span>
+            {tshirtData.map((tshirt) => {
+              const detailLink = tshirt._id ? `/product/${CATEGORY_SLUG}/${tshirt._id}` : null;
+              const card = (
+                <article className="gallery-card">
+                  <div className="gallery-media">
+                    <img
+                      src={tshirt.image || "https://via.placeholder.com/400x500?text=Luxe+Tee"}
+                      alt={tshirt.name}
+                      loading="lazy"
+                    />
+                    {(tshirt.newArrival || tshirt.sale) && (
+                      <span className="gallery-badge">{tshirt.newArrival ? "New" : "Sale"}</span>
                     )}
                   </div>
 
-                  <div className="gallery-meta">
-                    <span>★ {tshirt.rating || 4.8}</span>
-                    <span>{formatListPreview(tshirt.size)}</span>
+                  <div className="gallery-info">
+                    <div className="gallery-pill-row">
+                      <span className="gallery-pill">{tshirt.material || selectedMaterial}</span>
+                      <span className="gallery-pill">Tailored</span>
+                    </div>
+                    <h3 className="gallery-name">{tshirt.name}</h3>
+                    {tshirt.description && (
+                      <p className="gallery-description">{tshirt.description}</p>
+                    )}
+
+                    <div className="gallery-price-row">
+                      <span className="gallery-price">{formatPriceINR(tshirt.price)}</span>
+                      {tshirt.originalPrice && tshirt.originalPrice > tshirt.price && (
+                        <span className="gallery-original">{formatPriceINR(tshirt.originalPrice)}</span>
+                      )}
+                    </div>
+
+                    <div className="gallery-meta">
+                      <span>★ {tshirt.rating || 4.8}</span>
+                      <span>{formatListPreview(tshirt.size)}</span>
+                    </div>
                   </div>
+                </article>
+              );
+
+              return detailLink ? (
+                <Link key={tshirt._id} to={detailLink} className="gallery-card-link">
+                  {card}
+                </Link>
+              ) : (
+                <div key={tshirt.name} className="gallery-card-link">
+                  {card}
                 </div>
-              </article>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="empty-state">
