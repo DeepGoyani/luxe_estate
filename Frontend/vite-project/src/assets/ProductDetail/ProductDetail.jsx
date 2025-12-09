@@ -126,12 +126,31 @@ const ProductDetail = () => {
         <div className="product-detail-container">
           <div className="product-detail-content">
             <div className="product-image-section">
-              <img 
-                src={product.image || 'https://via.placeholder.com/400x500?text=Luxe+Product'} 
-                alt={product.name}
-                className="product-main-image"
-                loading="lazy"
-              />
+              <div className="main-image-container">
+                <img 
+                  src={(product.images && product.images[currentImageIndex]) || product.image || 'https://via.placeholder.com/400x500?text=Luxe+Product'} 
+                  alt={product.name}
+                  className="product-main-image"
+                  loading="lazy"
+                />
+              </div>
+              {product.images && product.images.length > 1 && (
+                <div className="thumbnail-gallery">
+                  {product.images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleImageChange(index)}
+                      className={`thumbnail ${currentImageIndex === index ? 'active' : ''}`}
+                    >
+                      <img 
+                        src={image} 
+                        alt={`${product.name} - View ${index + 1}`}
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="product-info-section">
