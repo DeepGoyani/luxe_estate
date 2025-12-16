@@ -10,6 +10,7 @@ import TrousersCollection from "./assets/Trousers/Trousers";
 import ExclusiveProducts from "./assets/Exclusive/Exclusive";
 import Mens from "./assets/Mens/Mens";
 import Womens from "./assets/Womens/Womens";
+import ProductDetail from "./assets/ProductDetail/ProductDetail";
 import HeaderNavbar from "./HeaderNavbar";
 import Footer from "./Footer";
 import './assets/GenderCollection/GenderCollection.css';
@@ -45,6 +46,7 @@ const App = () => {
           <Route path="/exclusive" element={<ExclusiveProducts />} />
           <Route path="/men" element={<Mens />} />
           <Route path="/women" element={<Womens />} />
+          <Route path="/product/:category/:productId" element={<ProductDetail />} />
         </Routes>
       </main>
       <Footer />

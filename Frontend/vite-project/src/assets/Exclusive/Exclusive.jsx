@@ -1,13 +1,30 @@
-import  { useState } from 'react';
-import { Star, ChevronRight, Search, ShoppingBag, Heart } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useCurrency } from '../../context/CurrencyContext.jsx';
+import '../Collection/CollectionGallery.css';
 import './Exclusive.css';
-import HeaderNavbar from '../../HeaderNavbar';
-import Footer from '../../Footer';
 
+const HERO_IMAGE =
+  'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1400&q=80';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const CATEGORY_SLUG = 'exclusive';
+
+const formatListPreview = (value, fallback = 'Tailored Fit') => {
+  if (Array.isArray(value) && value.length) {
+    const preview = value.slice(0, 3).join(' • ');
+    return value.length > 3 ? `${preview} +` : preview;
+  }
+  return value || fallback;
+};
 
 const ExclusiveProducts = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { formatPriceINR } = useCurrency();
 
   const filters = [
     { id: 'all', label: 'All Collections' },
@@ -16,106 +33,143 @@ const ExclusiveProducts = () => {
     { id: 'premium', label: 'Premium Selection' }
   ];
 
-  const products = [
-    {
-     id: 1,
-      name: "The Manhattan Suit",
-      price: "$1,299",
-      rating: 5,
-      image: "/placeholder.svg?height=600&width=400",
-      category: "Exclusive Edition",
-      description: "Tailored perfection in Italian wool",
-      discount: "15% OFF"
-    },
-    // ... other products
-  ];
+  useEffect(() => {
+    const fetchExclusive = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { data } = await axios.get(`${API_URL}/exclusive`);
+        const normalized = Array.isArray(data)
+          ? data.map(item => ({
+              ...item,
+              collectionTag: item.collection || 'Exclusive Edition'
+            }))
+          : [];
+        setAllProducts(normalized);
+        setDisplayedProducts(normalized);
+      } catch (err) {
+        console.error('Error fetching exclusive products:', err);
+        setError('Unable to load exclusive inventory.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return (
-    <div className="exclusive-shop">
-      {/* Hero Section */}
-      <HeaderNavbar/>
+    fetchExclusive();
+  }, []);
 
-      <div className="hero-section">
-        <div className="hero-content">
-          <h1>Exclusive Collection</h1>
-          <p>Where Luxury Meets Legacy</p>
-          <div className="search-bar">
-            <Search className="search-icon" />
-            <input type="text" placeholder="Search exclusive items..." />
-          </div>
+  useEffect(() => {
+    if (selectedFilter === 'all') {
+      setDisplayedProducts(allProducts);
+    } else {
+      setDisplayedProducts(
+        allProducts.filter(
+          (product) => product.collectionTag?.toLowerCase().includes(selectedFilter)
+        )
+      );
+    }
+  }, [selectedFilter, allProducts]);
+
+  if (loading) {
+    return (
+      <div className="page-loader">
+        <div className="luxe-ring">
+          <div className="luxe-initials">LE</div>
         </div>
       </div>
+    );
+  }
 
-      {/* Filter Section */}
-      <div className="filter-section">
-        <div className="filter-container">
+  if (error) {
+    return <div className="empty-state">{error}</div>;
+  }
+
+  return (
+    <div className="collection-page exclusive-collection">
+      <HeaderNavbar/>
+      <section
+        className="collection-hero"
+        style={{ "--hero-image": `url(${HERO_IMAGE})` }}
+      >
+        <div className="collection-hero-content">
+          <span className="collection-eyebrow">Limited Maison</span>
+          <h1 className="collection-title">The Exclusive Salon</h1>
+          <p className="collection-subtitle">
+            Couture capsules, numbered editions, and atelier signatures reserved for the Luxe Estate inner circle.
+          </p>
+        </div>
+      </section>
+
+      <section className="collection-content">
+        <div className="filter-toolbar">
           {filters.map(filter => (
             <button
               key={filter.id}
-              className={`filter-btn ${activeFilter === filter.id ? 'active' : ''}`}
-              onClick={() => setActiveFilter(filter.id)}
+              onClick={() => setSelectedFilter(filter.id)}
+              className={`filter-chip ${selectedFilter === filter.id ? 'active' : ''}`}
             >
               {filter.label}
-              <ChevronRight className={`arrow-icon ${activeFilter === filter.id ? 'active' : ''}`} />
             </button>
           ))}
         </div>
-      </div>
 
-      {/* Featured Product */}
-      <div className="featured-product">
-        <div className="featured-content">
-          <span className="featured-label">Featured Item</span>
-          <h2>The Manhattan Collection</h2>
-          <p>Experience unparalleled luxury with our signature collection</p>
-          <button className="explore-btn">
-            Explore Collection
-            <ChevronRight className="btn-icon" />
-          </button>
-        </div>
-      </div>
+        {displayedProducts.length ? (
+          <div className="collection-grid">
+            {displayedProducts.map((product) => {
+              const detailLink = product._id ? `/product/${CATEGORY_SLUG}/${product._id}` : null;
+              const card = (
+                <article className="gallery-card">
+                  <div className="gallery-media">
+                    <img
+                      src={product.image || 'https://via.placeholder.com/400x500?text=Luxe+Exclusive'}
+                      alt={product.name}
+                      loading="lazy"
+                    />
+                    {(product.newArrival || product.sale) && (
+                      <span className="gallery-badge">{product.newArrival ? 'New' : 'Sale'}</span>
+                    )}
+                  </div>
 
-      {/* Products Grid */}
-      <div className="products-grid">
-        {products.map(product => (
-          <div
-            key={product.id}
-            className="product-card"
-            onMouseEnter={() => setHoveredProduct(product.id)}
-            onMouseLeave={() => setHoveredProduct(null)}
-          >
-            <div className="product-image">
-              <img src={product.image || "/placeholder.svg"} alt={product.name} />
-              {hoveredProduct === product.id && (
-                <div className="product-actions">
-                  <button className="action-btn">
-                    <ShoppingBag className="action-icon" />
-                  </button>
-                  <button className="action-btn">
-                    <Heart className="action-icon" />
-                  </button>
+                  <div className="gallery-info">
+                    <div className="gallery-pill-row">
+                      <span className="gallery-pill">{product.material || 'Maison Atelier'}</span>
+                      <span className="gallery-pill">{product.collectionTag || 'Exclusive Edition'}</span>
+                    </div>
+                    <h3 className="gallery-name">{product.name}</h3>
+                    {product.description && (
+                      <p className="gallery-description">{product.description}</p>
+                    )}
+
+                    <div className="gallery-price-row">
+                      <span className="gallery-price">{formatPriceINR(product.price)}</span>
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <span className="gallery-original">{formatPriceINR(product.originalPrice)}</span>
+                      )}
+                    </div>
+
+                    <div className="gallery-meta">
+                      <span>★ {product.rating || 4.9}</span>
+                      <span>{formatListPreview(product.size)}</span>
+                    </div>
+                  </div>
+                </article>
+              );
+
+              return detailLink ? (
+                <Link key={product._id} to={detailLink} className="gallery-card-link">
+                  {card}
+                </Link>
+              ) : (
+                <div key={product._id || product.name} className="gallery-card-link">
+                  {card}
                 </div>
-              )}
-              {product.isNew && <span className="status-label new">New Arrival</span>}
-              {product.trending && <span className="status-label trending">Trending</span>}
-              {product.discount && <span className="status-label discount">{product.discount}</span>}
-            </div>
-            <div className="product-info">
-              <div className="product-category">{product.category}</div>
-              <h3>{product.name}</h3>
-              <p className="product-description">{product.description}</p>
-              <div className="product-details">
-                <span className="price">${product.price}</span>
-                <div className="rating">
-                  {[...Array(product.rating)].map((_, i) => (
-                    <Star key={i} className="star-icon" fill="currentColor" />
-                  ))}
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
+        ) : (
+          <div className="empty-state">No looks available in this capsule.</div>
+        )}
+      </section>
       <Footer/>
     </div>
   );
