@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
-import { FiHeart, FiShoppingBag, FiEye } from 'react-icons/fi';
+import { FiHeart, FiShoppingBag, FiEye, FiMinus, FiPlus } from 'react-icons/fi';
 import { useCurrency } from '../../context/CurrencyContext';
+import { useState } from 'react';
 import './ProductCard.css';
 
 const FALLBACK_IMAGE = 'https://via.placeholder.com/500x600/f5f1eb/1c1917?text=Luxe+Estate';
 
 const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
   const { formatPriceINR } = useCurrency();
+  const [quantity, setQuantity] = useState(1);
+  const [showQuantityModal, setShowQuantityModal] = useState(false);
   const getCategorySlug = () => {
     if (product.categorySlug) return product.categorySlug;
     if (typeof product.category === 'string') {
@@ -17,6 +20,23 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
 
   const detailLink = `/product/${getCategorySlug()}/${product._id}`;
   const primaryImage = product.images?.[0] || product.image || FALLBACK_IMAGE;
+
+  const handleAddToCartClick = () => {
+    setShowQuantityModal(true);
+  };
+
+  const handleQuantityChange = (change) => {
+    const newQuantity = quantity + change;
+    if (newQuantity >= 1 && newQuantity <= 10) {
+      setQuantity(newQuantity);
+    }
+  };
+
+  const handleConfirmAddToCart = () => {
+    onAddToCart?.(product._id, quantity);
+    setShowQuantityModal(false);
+    setQuantity(1);
+  };
   
   return (
     <div className="product-card">
@@ -42,7 +62,7 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
           </button>
           <button 
             className="action-btn cart-btn" 
-            onClick={() => onAddToCart?.(product._id)}
+            onClick={handleAddToCartClick}
             aria-label="Add to cart"
           >
             <FiShoppingBag size={18} />
@@ -93,15 +113,25 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
             <strong>{Array.isArray(product.color) ? product.color.slice(0, 2).join(' • ') : 'Curated'}</strong>
           </li>
         </ul>
-        <div className="product-price">
-          {product.discount > 0 ? (
-            <>
-              <span className="current-price">{formatPriceINR(product.price * (1 - product.discount / 100))}</span>
-              <span className="original-price">{formatPriceINR(product.price)}</span>
-            </>
-          ) : (
-            <span className="current-price">{formatPriceINR(product.price)}</span>
-          )}
+        <div className="product-price-section">
+          <div className="product-price">
+            {product.discount > 0 ? (
+              <>
+                <span className="current-price">{formatPriceINR(product.price * (1 - product.discount / 100))}</span>
+                <span className="original-price">{formatPriceINR(product.price)}</span>
+              </>
+            ) : (
+              <span className="current-price">{formatPriceINR(product.price)}</span>
+            )}
+          </div>
+          <button 
+            className="add-to-cart-btn"
+            onClick={handleAddToCartClick}
+            aria-label="Add to cart"
+          >
+            <FiShoppingBag size={16} />
+            Add to Cart
+          </button>
         </div>
         {product.rating && (
           <div className="product-rating">
@@ -117,6 +147,46 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
           </div>
         )}
       </div>
+
+      {/* Quantity Modal */}
+      {showQuantityModal && (
+        <div className="quantity-modal-overlay" onClick={() => setShowQuantityModal(false)}>
+          <div className="quantity-modal" onClick={(e) => e.stopPropagation()}>
+            <h4>Select Quantity</h4>
+            <div className="quantity-selector">
+              <button 
+                className="quantity-btn"
+                onClick={() => handleQuantityChange(-1)}
+                disabled={quantity <= 1}
+              >
+                <FiMinus size={16} />
+              </button>
+              <span className="quantity-number">{quantity}</span>
+              <button 
+                className="quantity-btn"
+                onClick={() => handleQuantityChange(1)}
+                disabled={quantity >= 10}
+              >
+                <FiPlus size={16} />
+              </button>
+            </div>
+            <div className="quantity-actions">
+              <button 
+                className="cancel-btn"
+                onClick={() => setShowQuantityModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="confirm-btn"
+                onClick={handleConfirmAddToCart}
+              >
+                Add {quantity} to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

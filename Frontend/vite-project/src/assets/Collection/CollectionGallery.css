@@ -90,8 +90,40 @@
 
 .collection-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Ensure ProductCard works well in the collection grid */
+.collection-grid .product-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Add to Cart Button for Gallery Cards */
+.gallery-add-to-cart-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+}
+
+.gallery-add-to-cart-btn:hover {
+  background: #2c2c2c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-add-to-cart-btn:active {
+  transform: translateY(0);
 }
 
 .gallery-card {

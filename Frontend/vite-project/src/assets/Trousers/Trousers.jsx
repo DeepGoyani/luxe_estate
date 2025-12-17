@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ProductCard from '../../components/ProductCard/ProductCard';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import '../Collection/CollectionGallery.css';
 
@@ -23,7 +24,33 @@ export default function Trousers() {
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const { formatPriceINR } = useCurrency();
+
+  const handleAddToCart = (productId, quantity = 1) => {
+    const product = allProducts.find(p => p._id === productId);
+    if (product) {
+      setCartItems(prev => {
+        const existingItem = prev.find(item => item.productId === productId);
+        if (existingItem) {
+          return prev.map(item => 
+            item.productId === productId 
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          return [...prev, { productId, quantity, product }];
+        }
+      });
+      
+      // Show success feedback
+      console.log(`Added ${quantity} ${product.name} to cart`);
+    }
+  };
+
+  const handleAddToWishlist = (productId) => {
+    console.log(`Added product ${productId} to wishlist`);
+  };
 
   useEffect(() => {
     const fetchTrousers = async () => {
@@ -145,6 +172,14 @@ export default function Trousers() {
                       <span>★ {product.rating || 4.8}</span>
                       <span>{formatListPreview(product.sizeRange || product.size)}</span>
                     </div>
+
+                    {/* Add to Cart Button */}
+                    <button 
+                      className="gallery-add-to-cart-btn"
+                      onClick={() => handleAddToCart(product._id)}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
                 </article>
               );
