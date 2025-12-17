@@ -730,11 +730,13 @@
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
   padding: 0.75rem 0;
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
 .quantity-display::-webkit-outer-spin-button,
 .quantity-display::-webkit-inner-spin-button {
+  appearance: none;
   -webkit-appearance: none;
   margin: 0;
 }
