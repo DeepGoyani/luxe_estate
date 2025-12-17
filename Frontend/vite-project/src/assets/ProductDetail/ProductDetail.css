@@ -367,23 +367,28 @@
 }
 
 .add-to-cart-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 2rem;
-  background: #1a1a1a;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 1rem 2rem !important;
+  background: #000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000 !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
 }
 
 .add-to-cart-btn:hover {
-  background: #374151;
-  transform: translateY(-1px);
+  background: #333 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
 .wishlist-btn,
