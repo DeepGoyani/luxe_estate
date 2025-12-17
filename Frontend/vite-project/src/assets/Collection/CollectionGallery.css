@@ -90,8 +90,15 @@
 
 .collection-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Ensure ProductCard works well in the collection grid */
+.collection-grid .product-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .gallery-card {

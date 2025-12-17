@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ProductCard from '../../components/ProductCard/ProductCard';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import '../Collection/CollectionGallery.css';
 
@@ -23,7 +24,33 @@ export default function Trousers() {
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const { formatPriceINR } = useCurrency();
+
+  const handleAddToCart = (productId, quantity = 1) => {
+    const product = allProducts.find(p => p._id === productId);
+    if (product) {
+      setCartItems(prev => {
+        const existingItem = prev.find(item => item.productId === productId);
+        if (existingItem) {
+          return prev.map(item => 
+            item.productId === productId 
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          return [...prev, { productId, quantity, product }];
+        }
+      });
+      
+      // Show success feedback
+      console.log(`Added ${quantity} ${product.name} to cart`);
+    }
+  };
+
+  const handleAddToWishlist = (productId) => {
+    console.log(`Added product ${productId} to wishlist`);
+  };
 
   useEffect(() => {
     const fetchTrousers = async () => {
@@ -109,56 +136,14 @@ export default function Trousers() {
 
         {displayedProducts.length ? (
           <div className="collection-grid">
-            {displayedProducts.map((product) => {
-              const detailLink = product._id ? `/product/trousers/${product._id}` : null;
-              const card = (
-                <article className="gallery-card">
-                  <div className="gallery-media">
-                    <img
-                      src={product.image || 'https://via.placeholder.com/400x500?text=Luxe+Trousers'}
-                      alt={product.name}
-                      loading="lazy"
-                    />
-                    {(product.newArrival || product.sale) && (
-                      <span className="gallery-badge">{product.newArrival ? 'New' : 'Sale'}</span>
-                    )}
-                  </div>
-
-                  <div className="gallery-info">
-                    <div className="gallery-pill-row">
-                      <span className="gallery-pill">{product.material || selectedMaterial}</span>
-                      <span className="gallery-pill">{product.category || 'Tailored'}</span>
-                    </div>
-                    <h3 className="gallery-name">{product.name}</h3>
-                    {product.description && (
-                      <p className="gallery-description">{product.description}</p>
-                    )}
-
-                    <div className="gallery-price-row">
-                      <span className="gallery-price">{formatPriceINR(product.price)}</span>
-                      {product.originalPrice && product.originalPrice > product.price && (
-                        <span className="gallery-original">{formatPriceINR(product.originalPrice)}</span>
-                      )}
-                    </div>
-
-                    <div className="gallery-meta">
-                      <span>★ {product.rating || 4.8}</span>
-                      <span>{formatListPreview(product.sizeRange || product.size)}</span>
-                    </div>
-                  </div>
-                </article>
-              );
-
-              return detailLink ? (
-                <Link key={product._id} to={detailLink} className="gallery-card-link">
-                  {card}
-                </Link>
-              ) : (
-                <div key={product._id || product.name} className="gallery-card-link">
-                  {card}
-                </div>
-              );
-            })}
+            {displayedProducts.map((product) => (
+              <ProductCard
+                key={product._id || product.name}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+              />
+            ))}
           </div>
         ) : (
           <div className="empty-state">No trousers found at the moment.</div>
