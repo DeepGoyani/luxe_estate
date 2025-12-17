@@ -101,6 +101,31 @@
   margin: 0 auto;
 }
 
+/* Add to Cart Button for Gallery Cards */
+.gallery-add-to-cart-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+}
+
+.gallery-add-to-cart-btn:hover {
+  background: #2c2c2c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-add-to-cart-btn:active {
+  transform: translateY(0);
+}
+
 .gallery-card {
   background: var(--collection-card);
   border: 1px solid var(--collection-border);
