@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import LuxeLoader from '../../components/LuxeLoader';
+import ProductCard from '../../components/ProductCard/ProductCard';
 import { useCurrency } from '../../context/CurrencyContext';
 import '../Collection/CollectionGallery.css';
 import './GenderCollection.css';
@@ -84,7 +85,33 @@ const GenderCollection = ({
   const [priceBounds, setPriceBounds] = useState([0, 0]);
   const [priceLimit, setPriceLimit] = useState(0);
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [cartItems, setCartItems] = useState([]);
   const { formatPriceINR } = useCurrency();
+
+  const handleAddToCart = (productId, quantity = 1) => {
+    const product = products.find(p => p._id === productId);
+    if (product) {
+      setCartItems(prev => {
+        const existingItem = prev.find(item => item.productId === productId);
+        if (existingItem) {
+          return prev.map(item => 
+            item.productId === productId 
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          return [...prev, { productId, quantity, product }];
+        }
+      });
+      
+      // Show success feedback
+      console.log(`Added ${quantity} ${product.name} to cart`);
+    }
+  };
+
+  const handleAddToWishlist = (productId) => {
+    console.log(`Added product ${productId} to wishlist`);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -359,65 +386,14 @@ const GenderCollection = ({
 
         {filteredProducts.length ? (
           <div className="gender-grid">
-            {filteredProducts.map((product) => {
-              const primaryImage = product.image || product.images?.[0] || INLINE_PLACEHOLDER;
-              const material = product.material || 'Premium Blend';
-              const sizePreview = formatListPreview(product.size || product.sizes, 'XS-XXL');
-              const colorPreview = formatListPreview(product.color || product.colors, 'Curated Palette');
-              const displayedFeatures = Array.isArray(product.features) ? product.features.slice(0, 2) : [];
-              const detailLink = `/product/${getCategorySlug(product, gender)}/${product._id}`;
-              return (
-                <Link key={product._id || product.name} to={detailLink} className="gender-card-link">
-                  <article className="gallery-card">
-                    <div className="gallery-media">
-                      <img
-                        src={primaryImage}
-                        alt={product.name}
-                        onError={(e) => {
-                          e.currentTarget.src = INLINE_PLACEHOLDER;
-                        }}
-                        loading="lazy"
-                      />
-                      {(product.newArrival || product.sale || product.inStock === false) && (
-                        <div className="product-badges">
-                          {product.newArrival && <span className="badge new-arrival">New</span>}
-                          {product.sale && <span className="badge sale-badge">Sale</span>}
-                          {product.inStock === false && <span className="badge out-of-stock">Out</span>}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="gallery-info">
-                      <div className="gallery-pill-row">
-                        <span className="gallery-pill">{material}</span>
-                        <span className="gallery-pill">{getDisplayCategory(product.category || gender)}</span>
-                      </div>
-
-                      <h3 className="gallery-name">{product.name}</h3>
-                      {product.description && (
-                        <p className="gallery-description">
-                          {product.description.length > 110
-                            ? `${product.description.slice(0, 110)}…`
-                            : product.description}
-                        </p>
-                      )}
-
-                      <div className="gallery-price-row">
-                        <span className="gallery-price">{formatPriceINR(product.price)}</span>
-                        {product.originalPrice && product.originalPrice > product.price && (
-                          <span className="gallery-original">{formatPriceINR(product.originalPrice)}</span>
-                        )}
-                      </div>
-
-                      <div className="gallery-meta">
-                        <span>★ {product.rating || 4.8}</span>
-                        <span>{sizePreview}</span>
-                      </div>
-                    </div>
-                  </article>
-                </Link>
-              );
-            })}
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product._id || product.name}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+              />
+            ))}
           </div>
         ) : (
           <div className="gender-empty-state">
