@@ -5,7 +5,7 @@ import ProductCard from '../../components/ProductCard/ProductCard';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import '../Collection/CollectionGallery.css';
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://luxe-estate-3.onrender.com/api';
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1400&q=80';
 
