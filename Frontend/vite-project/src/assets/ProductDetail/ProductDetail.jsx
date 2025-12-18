@@ -5,7 +5,7 @@ import { FiShoppingCart, FiHeart, FiShare2, FiPlus, FiMinus, FiEye } from 'react
 import { useCurrency } from '../../context/CurrencyContext.jsx';
 import './ProductDetail.css';
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://luxe-estate-3.onrender.com/api';
 
 const ProductDetail = () => {
   const { category, productId } = useParams();
