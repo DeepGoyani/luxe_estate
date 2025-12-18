@@ -751,6 +751,7 @@ body {
   background-clip: padding-box;
 }
 
+/* Hero Section */
 .luxury-product-card::before {
   content: '';
   position: absolute;
