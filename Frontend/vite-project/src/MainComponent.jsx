@@ -7,7 +7,7 @@ import './Landing.css';
 import './assets/Collection/CollectionGallery.css';
 
 // Directly defined API URL (replace with your actual backend URL)
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://luxe-estate-3.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 const ENABLE_CONVERSION_RATES = import.meta.env.VITE_ENABLE_CONVERSION_RATES === 'true';
 const INLINE_PLACEHOLDER =
   'data:image/svg+xml;utf8,' +
