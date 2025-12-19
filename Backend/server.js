@@ -30,10 +30,10 @@ async function main() {
     const productRoutes = initializeProductRoutes(db);
     const subscriberRoutes = initializeSubscriberRoutes(db);
 
-    // Use the route modules
-    app.use('/', cartRoutes);
-    app.use('/', productRoutes);
-    app.use('/', subscriberRoutes);
+    // Use the route modules with /api prefix
+    app.use('/api', cartRoutes);
+    app.use('/api', productRoutes);
+    app.use('/api', subscriberRoutes);
 
     // Route to fetch conversion rates
     app.get('/api/conversion-rates', async (req, res) => {
