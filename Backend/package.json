@@ -1,10 +1,10 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "simple-server.js",
+  "main": "minimal-server.js",
   "scripts": {
-    "start": "node simple-server.js",
-    "dev": "nodemon server.js",
+    "start": "node minimal-server.js",
+    "dev": "nodemon minimal-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
