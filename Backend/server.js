@@ -57,6 +57,14 @@ async function main() {
         message: 'Luxe Estate API is running',
         timestamp: new Date().toISOString()
       });
+
+    // Root route for Render health check
+    app.get('/', (req, res) => {
+      res.json({ 
+        status: 'OK', 
+        message: 'Luxe Estate Backend API is running',
+        timestamp: new Date().toISOString()
+      });
     });
 
     // Start the server
