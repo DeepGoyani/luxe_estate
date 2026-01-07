@@ -220,28 +220,33 @@
 }
 
 /* Add to Cart Button for Gallery Cards in Gender Collection */
-.gallery-add-to-cart-btn {
+.gender-grid .gallery-card .gallery-info .gallery-add-to-cart-btn {
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: #1a1a1a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 1rem;
+  padding: 1rem !important;
+  background: #000 !important;
+  color: white !important;
+  border: 2px solid #000 !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-top: 1rem !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
 }
 
-.gallery-add-to-cart-btn:hover {
-  background: #2c2c2c;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.gender-grid .gallery-card .gallery-info .gallery-add-to-cart-btn:hover {
+  background: #333 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
-.gallery-add-to-cart-btn:active {
-  transform: translateY(0);
+.gender-grid .gallery-card .gallery-info .gallery-add-to-cart-btn:active {
+  transform: translateY(0) !important;
 }
 
 .gender-empty-state {

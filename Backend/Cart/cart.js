@@ -7,7 +7,7 @@ const router = express.Router();
 const initializeCartRoutes = (db) => {
   
   // Add item to cart
-  router.post('/api/cart', async (req, res) => {
+  router.post('/cart', async (req, res) => {
     const { productId, category, quantity } = req.body;
 
     if (!productId || !category) {
@@ -48,7 +48,7 @@ const initializeCartRoutes = (db) => {
   });
 
   // Fetch cart items
-  router.get('/api/cart', async (req, res) => {
+  router.get('/cart', async (req, res) => {
     try {
       const cartItems = await db.collection('cart').find().toArray();
       res.json({ items: cartItems });
@@ -58,7 +58,7 @@ const initializeCartRoutes = (db) => {
   });
 
   // Delete item from cart
-  router.delete('/api/cart/:itemId', async (req, res) => {
+  router.delete('/cart/:itemId', async (req, res) => {
     const itemId = req.params.itemId;
     try {
       await db.collection('cart').deleteOne({ productId: itemId });
@@ -69,7 +69,7 @@ const initializeCartRoutes = (db) => {
   });
 
   // Update quantity in cart
-  router.patch('/api/cart/:itemId', async (req, res) => {
+  router.patch('/cart/:itemId', async (req, res) => {
     const itemId = req.params.itemId;
     const { quantity } = req.body;
 

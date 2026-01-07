@@ -95,7 +95,7 @@ const initializeProductRoutes = (db) => {
   };
 
   // Route to fetch product details by category and ID
-  router.get('/api/:category/:productId', async (req, res) => {
+  router.get('/:category/:productId', async (req, res) => {
     const { category, productId } = req.params;
 
     try {
@@ -110,7 +110,7 @@ const initializeProductRoutes = (db) => {
   });
 
   // Route for shirts with material filtering
-  router.get('/api/shirts', async (req, res) => {
+  router.get('/shirts', async (req, res) => {
     try {
       const shirts = await fetchCollection('shirts', req.query);
       res.json(shirts);
@@ -120,7 +120,7 @@ const initializeProductRoutes = (db) => {
   });
 
   // Route for T-shirts with material filtering
-  router.get('/api/tshirts', async (req, res) => {
+  router.get('/tshirts', async (req, res) => {
     try {
       const tshirts = await fetchCollection('tshirts', req.query);
       res.json(tshirts);
@@ -130,7 +130,7 @@ const initializeProductRoutes = (db) => {
   });
 
   // Exclusive collection route
-  router.get('/api/exclusive', async (req, res) => {
+  router.get('/exclusive', async (req, res) => {
     try {
       const exclusiveProducts = await fetchCollection('exclusive', req.query);
       res.json(exclusiveProducts);
@@ -140,7 +140,7 @@ const initializeProductRoutes = (db) => {
   });
 
   // Route to fetch products by category with shared filters
-  router.get('/api/:category', async (req, res) => {
+  router.get('/:category', async (req, res) => {
     const { category } = req.params;
     const validCategories = ['men', 'women', 'tshirts', 'trousers', 'shirts', 'exclusive'];
 

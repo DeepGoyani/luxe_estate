@@ -1,12 +1,7 @@
 const express = require('express');
-const axios = require('axios');
-const { MongoClient } = require('mongodb');
 const cors = require('cors');
-
-// Import route modules
-const initializeCartRoutes = require('./Cart/cart');
-const initializeProductRoutes = require('./Products/Products');
-const initializeSubscriberRoutes = require('./Subscribers/subscribers');
+const { MongoClient } = require('mongodb');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +19,11 @@ app.use(express.json());
 const uri = "mongodb+srv://deepgoyani77_Deep:1234@luxeestate.ge896bz.mongodb.net/";
 const client = new MongoClient(uri);
 
+// Import route modules
+const initializeCartRoutes = require('./Cart/cart');
+const initializeProductRoutes = require('./Products/Products');
+const initializeSubscriberRoutes = require('./Subscribers/subscribers');
+
 async function main() {
   try {
     await client.connect();
@@ -40,14 +40,13 @@ async function main() {
     app.use('/api', productRoutes);
     app.use('/api', subscriberRoutes);
 
-    // Route to fetch conversion rates
-    app.get('/api/conversion-rates', async (req, res) => {
-      try {
-        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
-        res.json(response.data.rates);
-      } catch (err) {
-        res.status(500).json({ error: "Error fetching conversion rates" });
-      }
+    // Root route for health check
+    app.get('/', (req, res) => {
+      res.json({ 
+        status: 'OK', 
+        message: 'Luxe Estate Backend API is running',
+        timestamp: new Date().toISOString()
+      });
     });
 
     // Health check route
@@ -59,13 +58,14 @@ async function main() {
       });
     });
 
-    // Root route for Render health check
-    app.get('/', (req, res) => {
-      res.json({ 
-        status: 'OK', 
-        message: 'Luxe Estate Backend API is running',
-        timestamp: new Date().toISOString()
-      });
+    // Route to fetch conversion rates
+    app.get('/api/conversion-rates', async (req, res) => {
+      try {
+        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
+        res.json(response.data.rates);
+      } catch (err) {
+        res.status(500).json({ error: "Error fetching conversion rates" });
+      }
     });
 
     // Start the server

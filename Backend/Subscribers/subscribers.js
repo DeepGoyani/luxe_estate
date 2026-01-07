@@ -12,7 +12,7 @@ const initializeSubscriberRoutes = (db) => {
   };
 
   // Route for newsletter subscription
-  router.post('/api/subscribers', async (req, res) => {
+  router.post('/subscribers', async (req, res) => {
     const { email } = req.body;
   
     // Frontend validates too, but double-check here

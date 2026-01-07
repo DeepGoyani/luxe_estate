@@ -1,9 +1,10 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "working-server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node working-server.js",
+    "dev": "nodemon working-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,5 +15,8 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "mongodb": "^6.13.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

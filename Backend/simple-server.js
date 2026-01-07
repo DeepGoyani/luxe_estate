@@ -1,12 +1,6 @@
 const express = require('express');
-const axios = require('axios');
-const { MongoClient } = require('mongodb');
 const cors = require('cors');
-
-// Import route modules
-const initializeCartRoutes = require('./Cart/cart');
-const initializeProductRoutes = require('./Products/Products');
-const initializeSubscriberRoutes = require('./Subscribers/subscribers');
+const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,24 +24,13 @@ async function main() {
     console.log("Connected to MongoDB successfully");
     const db = client.db("LandingPage");
 
-    // Initialize all route modules with database connection
-    const cartRoutes = initializeCartRoutes(db);
-    const productRoutes = initializeProductRoutes(db);
-    const subscriberRoutes = initializeSubscriberRoutes(db);
-
-    // Use the route modules with /api prefix
-    app.use('/api', cartRoutes);
-    app.use('/api', productRoutes);
-    app.use('/api', subscriberRoutes);
-
-    // Route to fetch conversion rates
-    app.get('/api/conversion-rates', async (req, res) => {
-      try {
-        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
-        res.json(response.data.rates);
-      } catch (err) {
-        res.status(500).json({ error: "Error fetching conversion rates" });
-      }
+    // Root route for health check
+    app.get('/', (req, res) => {
+      res.json({ 
+        status: 'OK', 
+        message: 'Luxe Estate Backend API is running',
+        timestamp: new Date().toISOString()
+      });
     });
 
     // Health check route
@@ -59,24 +42,33 @@ async function main() {
       });
     });
 
-    // Root route for Render health check
-    app.get('/', (req, res) => {
+    // Simple test route
+    app.get('/api/test', (req, res) => {
       res.json({ 
         status: 'OK', 
-        message: 'Luxe Estate Backend API is running',
+        message: 'API is working',
         timestamp: new Date().toISOString()
       });
     });
 
+    // Route to fetch conversion rates
+    app.get('/api/conversion-rates', async (req, res) => {
+      try {
+        const axios = require('axios');
+        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
+        res.json(response.data.rates);
+      } catch (err) {
+        res.status(500).json({ error: "Error fetching conversion rates" });
+      }
+    });
+
     // Start the server
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Server is running on port ${PORT}`);
       console.log('Available routes:');
-      console.log('- Cart: /api/cart');
-      console.log('- Products: /api/:category');
-      console.log('- Subscribers: /api/subscribers');
+      console.log('- Health: /api/health');
+      console.log('- Test: /api/test');
       console.log('- Conversion rates: /api/conversion-rates');
-      console.log('- Health check: /api/health');
     });
 
   } catch (err) {

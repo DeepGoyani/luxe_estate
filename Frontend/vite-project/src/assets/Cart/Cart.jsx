@@ -5,6 +5,8 @@ import { useCurrency } from "../../context/CurrencyContext.jsx";
 import "./Cart.css";
 import { FiShoppingBag, FiTrash2, FiPlus, FiMinus, FiHeart } from "react-icons/fi";
 
+const API_URL = import.meta.env.VITE_API_BASE_URL || "https://luxe-estate-3.onrender.com/api";
+
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,8 @@ const Cart = () => {
 
   const fetchCart = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/cart");
+      const response = await axios.get(`${API_URL}/cart`);
+
       setCartItems(response.data.items || []);
       console.log('Fetched Cart Items:', response.data.items);
     } catch (err) {
@@ -29,17 +32,13 @@ const Cart = () => {
   };
 
   const updateQuantity = async (id, quantity) => {
-    if (!id) {
-      console.error("Product ID is undefined!");
-      return;
-    }
-
     console.log(`Updating quantity for productId: ${id}, New Quantity: ${quantity}`);
 
     if (quantity < 1) return removeItem(id);
 
     try {
-      await axios.patch(`http://localhost:3000/api/cart/${id}`, { quantity });
+      await axios.patch(`${API_URL}/cart/${id}`, { quantity });
+
       fetchCart();
     } catch (err) {
       console.error("Error updating quantity:", err);
@@ -49,7 +48,8 @@ const Cart = () => {
 
   const removeItem = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/cart/${id}`);
+      await axios.delete(`${API_URL}/cart/${id}`);
+
       fetchCart();
     } catch (err) {
       console.error("Error removing item:", err);

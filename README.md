@@ -6,6 +6,9 @@
 ## **Features**  
 - 🏷️ **Curated Luxury Collection** – High-end fashion pieces at unbeatable prices.  
 - 🛍️ **Smooth Shopping Experience** – Intuitive UI/UX with easy navigation.  
+- 🛒 **Universal Add-to-Cart** – Buttons are visible and functional on **every product card, detail page, and landing section**, complete with quantity selection and cart badge updates.  
+- 🧭 **Smart Category Filtering** – `/men` and `/women` collections include filter chips (T-Shirts, Shirts, Trousers, etc.) powered by new `DataSeeds/*.json` files.  
+- 🧱 **Consistent Layout & Branding** – Header/navbar keeps Luxe Estate’s round logo centered with nav links/controls aligned on a single row.  
 - 🔄 **Real-Time Cart Updates** – Adjust quantities and remove items instantly.  
 - 🚀 **Fast & Scalable** – Optimized backend with **Node.js, Express, and MongoDB**.  
 - 🎨 **Modern & Responsive UI** – Styled with **React and Tailwind CSS**.  
@@ -16,18 +19,26 @@
 - **State Management**: React Hooks (useState, useEffect)  
 - **API Handling**: Axios  
 
+## **Recent Enhancements**
+- ♻️ Rebuilt every dataset in `DataSeeds/` with luxury-branded entries so filtering and detail views stay accurate.  
+- 🛒 Ensured Add to Cart flows work across cards, detail pages, and home highlights with identical visual styling.  
+- 🧭 Added gender-page segment filters using `categorySlug` inference for better discovery.  
+- 🧭 Implemented sticky header grid layout that centers the Luxe Estate logo while keeping nav links left and utility controls right.  
+- 🎯 Optimized cart/wishlist handlers inside `GenderCollection` to reuse shared `ProductCard`.  
+
 ## **Contact & Socials**  
-📧 **Email**: deepgoyani77@gmail.com 
-🔗 **LinkedIn**: [Deep Goyani(https://www.linkedin.com/in/deepgoyani/)  
+📧 **Email**: deepgoyani77@gmail.com  
+🔗 **LinkedIn**: [Deep Goyani](https://www.linkedin.com/in/deepgoyani/)  
+
 ## **Deployments**
 - 🌐 **Frontend (Vercel)**: https://luxe-estate-theta.vercel.app/
-- ⚙️ **Backend (Render)**: https://luxe-estate-4.onrender.com/
+- ⚙️ **Backend (Render)**: https://luxe-estate-3.onrender.com/
 
 ### Environment Setup
 Create a `.env` file inside `Frontend/vite-project` (or update `.env` if it exists) to point the app to the deployed backend:
 
 ```
-VITE_API_BASE_URL=https://luxe-estate-4.onrender.com/api
+VITE_API_BASE_URL=https://luxe-estate-3.onrender.com/api
 VITE_ENABLE_CONVERSION_RATES=false
 ```
 

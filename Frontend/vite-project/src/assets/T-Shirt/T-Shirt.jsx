@@ -7,7 +7,7 @@ import { useCurrency } from "../../context/CurrencyContext";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1400&q=80";
-const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "https://luxe-estate-3.onrender.com/api";
 const CATEGORY_SLUG = "tshirts";
 
 const formatListPreview = (value) => {
