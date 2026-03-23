@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCurrency } from './context/CurrencyContext';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import './Landing.css';
 
@@ -12,6 +13,7 @@ const HeaderNavbar = ({ cart = [] }) => {
     changeLanguage,
     getCurrencySymbol 
   } = useCurrency();
+  const { t } = useTranslation();
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
@@ -61,13 +63,13 @@ const HeaderNavbar = ({ cart = [] }) => {
       <nav className="navbar">
         <div className="nav-links">
           <Link to="/men" className="nav-btn">
-            Shop Men
+            {t('Shop Men')}
           </Link>
           <Link to="/women" className="nav-btn">
-            Shop Women
+            {t('Shop Women')}
           </Link>
           <Link to="/contactus" className="nav-btn" style={{ textDecoration: 'none', color: 'inherit' }}>
-            Contact Us
+            {t('Contact Us')}
           </Link>
         </div>
         <div className="nav-controls">
