@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCurrency } from './context/CurrencyContext';
+import { useTranslation } from 'react-i18next';
 import LuxeLoader from './components/LuxeLoader';
 import './Landing.css';
 import './assets/Collection/CollectionGallery.css';
@@ -26,6 +27,7 @@ const MainComponent = () => {
   const [quantities, setQuantities] = useState({});
 
   const { formatPriceINR } = useCurrency();
+  const { t } = useTranslation();
 
   // Define valid product categories
   const CATEGORIES = ['men', 'women', 'tshirts', 'trousers', 'shirts'];
@@ -148,21 +150,21 @@ const MainComponent = () => {
           Your browser does not support the video tag.
         </video>
         <div className="hero-overlay">
-          <h2>Luxury Starts and Ends With Us</h2> 
+          <h2>{t('Luxury Starts and Ends With Us')}</h2> 
           <Link to="/exclusive" className="shop-btn">
-            Shop Exclusive Products
+            {t('Shop Exclusive Products')}
           </Link>
         </div>
       </section>
 
       {loading ? (
-        <LuxeLoader message="Curating the Luxe wardrobe..." />
+        <LuxeLoader message={t("Curating the Luxe wardrobe...")} />
       ) : (
         CATEGORIES.map(category => (
           products[category]?.length > 0 && (
             <section key={category} id={category} className="product-section">
               <h2 className="collection-title">
-                {getDisplayCategory(category)} Collection
+                {t(`${getDisplayCategory(category)} Collection`)}
               </h2>
 
               <div className="product-grid">
@@ -234,7 +236,7 @@ const MainComponent = () => {
               {SHOP_ALL_ROUTES[category] && (
                 <div className="section-actions">
                   <Link to={SHOP_ALL_ROUTES[category]} className="show-all-btn">
-                    Show All
+                    {t('Show All')}
                   </Link>
                 </div>
               )}
