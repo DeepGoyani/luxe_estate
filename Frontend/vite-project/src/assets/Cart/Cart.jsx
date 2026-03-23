@@ -5,7 +5,7 @@ import { useCurrency } from "../../context/CurrencyContext.jsx";
 import "./Cart.css";
 import { FiShoppingBag, FiTrash2, FiPlus, FiMinus, FiHeart } from "react-icons/fi";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || "https://luxe-estate-3.onrender.com/api";
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
