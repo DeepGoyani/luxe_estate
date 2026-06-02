@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FiShoppingCart, FiHeart, FiShare2, FiPlus, FiMinus, FiEye } from 'react-icons/fi';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
+import { useCart } from '../../context/CartContext.jsx';
 import { useTranslation } from 'react-i18next';
 import './ProductDetail.css';
 
@@ -19,6 +20,7 @@ const ProductDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const { formatPriceINR } = useCurrency();
+  const { addToCart } = useCart();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -71,17 +73,12 @@ const ProductDetail = () => {
     }
   };
 
-  const addToCart = async () => {
+  const handleAddToCartClick = async () => {
     try {
-      await axios.post(`${API_URL}/cart`, {
-        productId,
-        category,
-        quantity
-      });
-      alert('Product added to cart successfully!');
+      await addToCart(productId, category, quantity);
+      alert(t('Product added to cart successfully!'));
     } catch (err) {
-      console.error('Error adding to cart:', err);
-      alert('Failed to add product to cart');
+      alert(t('Failed to add product to cart'));
     }
   };
 
@@ -161,7 +158,7 @@ const ProductDetail = () => {
                 <div className="product-badges">
                   {product.newArrival && <span className="badge new-arrival">NEW</span>}
                   {product.sale && <span className="badge sale-badge">SALE</span>}
-                  {!product.inStock && <span className="badge out-of-stock">OUT OF STOCK</span>}
+                  {product.inStock === false && <span className="badge out-of-stock">OUT OF STOCK</span>}
                 </div>
               </div>
               
@@ -226,7 +223,7 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="action-buttons">
-                  <button className="add-to-cart-btn" onClick={addToCart}>
+                  <button className="add-to-cart-btn" onClick={handleAddToCartClick}>
                     <FiShoppingCart size={18} />
                     {t('Add to Cart')}
                   </button>

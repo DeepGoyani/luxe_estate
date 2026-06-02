@@ -29,7 +29,8 @@
       "https://images.pexels.com/photos/1043475/pexels-photo-1043475.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/1043476/pexels-photo-1043476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
   },
   {
     "name": "Monaco Silk Dinner Jacket",
@@ -58,7 +59,8 @@
       "https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/769734/pexels-photo-769734.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/769735/pexels-photo-769735.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
   },
   {
     "name": "Savile Half-Canvas Suit",
@@ -87,6 +89,193 @@
       "https://images.pexels.com/photos/292350/pexels-photo-292350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/292351/pexels-photo-292351.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/292352/pexels-photo-292352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Classic Belgravia Cashmere Overcoat",
+    "category": "men",
+    "material": "Cashmere",
+    "price": 48500,
+    "originalPrice": 52000,
+    "size": [
+      "38",
+      "40",
+      "42",
+      "44",
+      "46"
+    ],
+    "color": [
+      "Camel",
+      "Carbon"
+    ],
+    "description": "Double-breasted cashmere overcoat with genuine horn buttons.",
+    "features": [
+      "Full canvas",
+      "Silk lining"
+    ],
+    "rating": 4.8,
+    "ratingCount": 158,
+    "newArrival": true,
+    "images": [
+      "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1043475/pexels-photo-1043475.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1043476/pexels-photo-1043476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Belgravia Cashmere Overcoat",
+    "category": "men",
+    "material": "Cashmere",
+    "price": 63050,
+    "originalPrice": 67600,
+    "size": [
+      "38",
+      "40",
+      "42",
+      "44",
+      "46"
+    ],
+    "color": [
+      "Camel",
+      "Carbon"
+    ],
+    "description": "Double-breasted cashmere overcoat with genuine horn buttons.",
+    "features": [
+      "Full canvas",
+      "Silk lining"
+    ],
+    "rating": 5,
+    "ratingCount": 118,
+    "newArrival": true,
+    "images": [
+      "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1043475/pexels-photo-1043475.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1043476/pexels-photo-1043476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Classic Monaco Silk Dinner Jacket",
+    "category": "men",
+    "material": "Silk",
+    "price": 36500,
+    "size": [
+      "38",
+      "40",
+      "42",
+      "44"
+    ],
+    "color": [
+      "Ivory",
+      "Onyx"
+    ],
+    "description": "Shawl lapel dinner jacket in duchess silk satin.",
+    "features": [
+      "Silk facings",
+      "Single button"
+    ],
+    "rating": 4.8,
+    "ratingCount": 75,
+    "images": [
+      "https://images.pexels.com/photos/769732/pexels-photo-769732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/769734/pexels-photo-769734.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/769735/pexels-photo-769735.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Premium Monaco Silk Dinner Jacket",
+    "category": "men",
+    "material": "Silk",
+    "price": 43800,
+    "size": [
+      "38",
+      "40",
+      "42",
+      "44"
+    ],
+    "color": [
+      "Ivory",
+      "Onyx"
+    ],
+    "description": "Shawl lapel dinner jacket in duchess silk satin.",
+    "features": [
+      "Silk facings",
+      "Single button"
+    ],
+    "rating": 4.7,
+    "ratingCount": 92,
+    "images": [
+      "https://images.pexels.com/photos/769732/pexels-photo-769732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/769734/pexels-photo-769734.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/769735/pexels-photo-769735.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Modern Savile Half-Canvas Suit",
+    "category": "men",
+    "material": "Wool",
+    "price": 32780,
+    "size": [
+      "38S",
+      "40R",
+      "42R",
+      "44L"
+    ],
+    "color": [
+      "Steel",
+      "Navy"
+    ],
+    "description": "Super 150s wool suit with floating canvas and pick stitching.",
+    "features": [
+      "Working cuffs",
+      "Bemberg lining"
+    ],
+    "rating": 4.5,
+    "ratingCount": 160,
+    "images": [
+      "https://images.pexels.com/photos/292349/pexels-photo-292349.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292350/pexels-photo-292350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292351/pexels-photo-292351.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292352/pexels-photo-292352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Classic Savile Half-Canvas Suit",
+    "category": "men",
+    "material": "Wool",
+    "price": 29800,
+    "size": [
+      "38S",
+      "40R",
+      "42R",
+      "44L"
+    ],
+    "color": [
+      "Steel",
+      "Navy"
+    ],
+    "description": "Super 150s wool suit with floating canvas and pick stitching.",
+    "features": [
+      "Working cuffs",
+      "Bemberg lining"
+    ],
+    "rating": 4.6,
+    "ratingCount": 183,
+    "images": [
+      "https://images.pexels.com/photos/292349/pexels-photo-292349.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292350/pexels-photo-292350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292351/pexels-photo-292351.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292352/pexels-photo-292352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
   }
 ]

@@ -27,7 +27,8 @@
       "https://images.pexels.com/photos/973327/pexels-photo-973327.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/973328/pexels-photo-973328.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/973329/pexels-photo-973329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
   },
   {
     "name": "Linen Camp Collar Shirt",
@@ -57,6 +58,131 @@
       "https://images.pexels.com/photos/973331/pexels-photo-973331.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/973332/pexels-photo-973332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/973333/pexels-photo-973333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Modern Oxford White Dress Shirt",
+    "category": "shirts",
+    "material": "Cotton",
+    "price": 9790,
+    "size": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42"
+    ],
+    "color": [
+      "White"
+    ],
+    "description": "Classic Oxford dress shirt with button-down collar.",
+    "features": [
+      "Button-down collar",
+      "Barrel cuffs"
+    ],
+    "rating": 4.6,
+    "ratingCount": 116,
+    "images": [
+      "https://images.pexels.com/photos/973326/pexels-photo-973326.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973327/pexels-photo-973327.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973328/pexels-photo-973328.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973329/pexels-photo-973329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Oxford White Dress Shirt",
+    "category": "shirts",
+    "material": "Cotton",
+    "price": 11570,
+    "size": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42"
+    ],
+    "color": [
+      "White"
+    ],
+    "description": "Classic Oxford dress shirt with button-down collar.",
+    "features": [
+      "Button-down collar",
+      "Barrel cuffs"
+    ],
+    "rating": 4.8,
+    "ratingCount": 172,
+    "images": [
+      "https://images.pexels.com/photos/973326/pexels-photo-973326.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973327/pexels-photo-973327.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973328/pexels-photo-973328.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973329/pexels-photo-973329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Premium Linen Camp Collar Shirt",
+    "category": "shirts",
+    "material": "Linen",
+    "price": 9120,
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Navy",
+      "White",
+      "Sky Blue"
+    ],
+    "description": "Relaxed fit camp collar shirt perfect for summer.",
+    "features": [
+      "Camp collar",
+      "Patch pocket"
+    ],
+    "rating": 4.7,
+    "ratingCount": 89,
+    "images": [
+      "https://images.pexels.com/photos/973330/pexels-photo-973330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973331/pexels-photo-973331.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973332/pexels-photo-973332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973333/pexels-photo-973333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Linen Camp Collar Shirt",
+    "category": "shirts",
+    "material": "Linen",
+    "price": 9880,
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Navy",
+      "White",
+      "Sky Blue"
+    ],
+    "description": "Relaxed fit camp collar shirt perfect for summer.",
+    "features": [
+      "Camp collar",
+      "Patch pocket"
+    ],
+    "rating": 4.6,
+    "ratingCount": 101,
+    "images": [
+      "https://images.pexels.com/photos/973330/pexels-photo-973330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973331/pexels-photo-973331.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973332/pexels-photo-973332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/973333/pexels-photo-973333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
   }
 ]

@@ -26,24 +26,10 @@ import RevenueAnalytics from "./Admin/RevenueAnalytics";
 import './assets/GenderCollection/GenderCollection.css';
 
 const App = () => {
-  const [cart, setCart] = useState([]);
-
-  // You might want to fetch the cart from your API here
-  // useEffect(() => {
-  //   const fetchCart = async () => {
-  //     try {
-  //       const response = await axios.get("http://localhost:3000/api/cart");
-  //       setCart(response.data.items || []);
-  //     } catch (error) {
-  //       console.error("Error fetching cart:", error);
-  //     }
-  //   };
-  //   fetchCart();
-  // }, []);
 
   return (
     <Router>
-      <HeaderNavbar cart={cart} />
+      <HeaderNavbar />
       <main>
         <Routes>
           <Route path="/" element={<MainComponent />} />

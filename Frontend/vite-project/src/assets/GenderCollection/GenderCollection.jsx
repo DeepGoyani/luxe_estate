@@ -4,6 +4,7 @@ import axios from 'axios';
 import LuxeLoader from '../../components/LuxeLoader';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { useCurrency } from '../../context/CurrencyContext';
+import { useCart } from '../../context/CartContext';
 import { useTranslation } from 'react-i18next';
 import '../Collection/CollectionGallery.css';
 import './GenderCollection.css';
@@ -86,28 +87,18 @@ const GenderCollection = ({
   const [priceBounds, setPriceBounds] = useState([0, 0]);
   const [priceLimit, setPriceLimit] = useState(0);
   const [filtersOpen, setFiltersOpen] = useState(true);
-  const [cartItems, setCartItems] = useState([]);
   const { formatPriceINR } = useCurrency();
+  const { addToCart } = useCart();
   const { t } = useTranslation();
 
-  const handleAddToCart = (productId, quantity = 1) => {
+  const handleAddToCart = async (productId, quantity = 1) => {
     const product = products.find(p => p._id === productId);
-    if (product) {
-      setCartItems(prev => {
-        const existingItem = prev.find(item => item.productId === productId);
-        if (existingItem) {
-          return prev.map(item => 
-            item.productId === productId 
-              ? { ...item, quantity: item.quantity + quantity }
-              : item
-          );
-        } else {
-          return [...prev, { productId, quantity, product }];
-        }
-      });
-      
-      // Show success feedback
-      console.log(`Added ${quantity} ${product.name} to cart`);
+    
+    try {
+      await addToCart(product._id, product.category, quantity);
+      alert(t('Item added to cart successfully!'));
+    } catch (err) {
+      alert(t('Failed to add item to cart'));
     }
   };
 

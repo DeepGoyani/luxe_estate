@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCurrency } from './context/CurrencyContext';
+import { useCart } from './context/CartContext';
 import { useTranslation } from 'react-i18next';
 import LuxeLoader from './components/LuxeLoader';
 import './Landing.css';
@@ -21,12 +22,12 @@ const INLINE_PLACEHOLDER =
 
 const MainComponent = () => {
   const [products, setProducts] = useState({});
-  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
 
   const { formatPriceINR } = useCurrency();
+  const { addToCart } = useCart();
   const { t } = useTranslation();
 
   // Define valid product categories
@@ -39,22 +40,12 @@ const MainComponent = () => {
     trousers: '/trousers'
   };
 
-  const addToCart = async (productId, category, quantity) => {
+  const handleAddToCart = async (productId, category, quantity) => {
     try {
-      const response = await axios.post(`${API_URL}/cart`, {
-        productId,
-        category,
-        quantity,
-      });
-
-      if (response.data) {
-        const cartResponse = await axios.get(`${API_URL}/cart`);
-        setCart(cartResponse.data.items || []);
-        alert('Item added to cart successfully!');
-      }
+      await addToCart(productId, category, quantity);
+      alert(t('Item added to cart successfully!'));
     } catch (err) {
-      console.error('Error adding to cart:', err);
-      alert(err.response?.data?.error || 'Failed to add item to cart');
+      alert(t('Failed to add item to cart'));
     }
   };
 
@@ -67,9 +58,7 @@ const MainComponent = () => {
           ? axios.get(`${API_URL}/conversion-rates`).catch(() => ({ data: null }))
           : Promise.resolve({ data: null });
 
-        const cartResponse = await axios.get(`${API_URL}/cart`).catch(() => ({ data: { items: [] } }));
         if (isMounted) {
-          setCart(cartResponse.data?.items || []);
           setLoading(false); // Dismiss loader early
         }
 

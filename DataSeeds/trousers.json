@@ -27,7 +27,8 @@
       "https://images.pexels.com/photos/292350/pexels-photo-292350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/292351/pexels-photo-292351.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/292352/pexels-photo-292352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
   },
   {
     "name": "Savannah Linen Trousers",
@@ -57,6 +58,131 @@
       "https://images.pexels.com/photos/292354/pexels-photo-292354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/292355/pexels-photo-292355.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/292356/pexels-photo-292356.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Premium Milano Wool Trousers",
+    "category": "trousers",
+    "material": "Wool",
+    "price": 17760,
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "color": [
+      "Charcoal",
+      "Navy",
+      "Taupe"
+    ],
+    "description": "Tailored wool trousers with flat front and unfinished hem.",
+    "features": [
+      "Internal waistband grip",
+      "Bemberg lining"
+    ],
+    "rating": 4.7,
+    "ratingCount": 91,
+    "images": [
+      "https://images.pexels.com/photos/292349/pexels-photo-292349.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292350/pexels-photo-292350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292351/pexels-photo-292351.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292352/pexels-photo-292352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Milano Wool Trousers",
+    "category": "trousers",
+    "material": "Wool",
+    "price": 19240,
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "color": [
+      "Charcoal",
+      "Navy",
+      "Taupe"
+    ],
+    "description": "Tailored wool trousers with flat front and unfinished hem.",
+    "features": [
+      "Internal waistband grip",
+      "Bemberg lining"
+    ],
+    "rating": 4.8,
+    "ratingCount": 97,
+    "images": [
+      "https://images.pexels.com/photos/292349/pexels-photo-292349.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292350/pexels-photo-292350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292351/pexels-photo-292351.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292352/pexels-photo-292352.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Savannah Linen Trousers",
+    "category": "trousers",
+    "material": "Linen",
+    "price": 12740,
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "color": [
+      "Natural",
+      "Olive",
+      "Stone"
+    ],
+    "description": "Lightweight linen trousers with pleated front and elastic waist.",
+    "features": [
+      "Side pockets",
+      "Back welt pockets"
+    ],
+    "rating": 4.7,
+    "ratingCount": 73,
+    "images": [
+      "https://images.pexels.com/photos/292353/pexels-photo-292353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292354/pexels-photo-292354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292355/pexels-photo-292355.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292356/pexels-photo-292356.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Premium Savannah Linen Trousers",
+    "category": "trousers",
+    "material": "Linen",
+    "price": 11760,
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "color": [
+      "Natural",
+      "Olive",
+      "Stone"
+    ],
+    "description": "Lightweight linen trousers with pleated front and elastic waist.",
+    "features": [
+      "Side pockets",
+      "Back welt pockets"
+    ],
+    "rating": 4.7,
+    "ratingCount": 82,
+    "images": [
+      "https://images.pexels.com/photos/292353/pexels-photo-292353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292354/pexels-photo-292354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292355/pexels-photo-292355.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/292356/pexels-photo-292356.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
   }
 ]

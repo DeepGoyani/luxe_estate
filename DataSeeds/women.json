@@ -29,6 +29,73 @@
       "https://images.pexels.com/photos/943731/pexels-photo-943731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/943732/pexels-photo-943732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/943733/pexels-photo-943733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Modern Paris Silk Evening Gown",
+    "category": "women",
+    "material": "Silk",
+    "price": 64350,
+    "size": [
+      "2",
+      "4",
+      "6",
+      "8",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Navy",
+      "Burgundy"
+    ],
+    "description": "Elegant floor-length silk gown with cowl neckline.",
+    "features": [
+      "Hand-sewn beads",
+      "Hidden zipper"
+    ],
+    "rating": 5,
+    "ratingCount": 70,
+    "newArrival": true,
+    "images": [
+      "https://images.pexels.com/photos/943730/pexels-photo-943730.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/943731/pexels-photo-943731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/943732/pexels-photo-943732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/943733/pexels-photo-943733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Paris Silk Evening Gown",
+    "category": "women",
+    "material": "Silk",
+    "price": 76050,
+    "size": [
+      "2",
+      "4",
+      "6",
+      "8",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Navy",
+      "Burgundy"
+    ],
+    "description": "Elegant floor-length silk gown with cowl neckline.",
+    "features": [
+      "Hand-sewn beads",
+      "Hidden zipper"
+    ],
+    "rating": 4.7,
+    "ratingCount": 79,
+    "newArrival": true,
+    "images": [
+      "https://images.pexels.com/photos/943730/pexels-photo-943730.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/943731/pexels-photo-943731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/943732/pexels-photo-943732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/943733/pexels-photo-943733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
   }
 ]

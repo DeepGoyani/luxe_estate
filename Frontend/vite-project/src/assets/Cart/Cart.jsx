@@ -1,63 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { useCurrency } from "../../context/CurrencyContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 import { useTranslation } from "react-i18next";
 import "./Cart.css";
 import { FiShoppingBag, FiTrash2, FiPlus, FiMinus, FiHeart } from "react-icons/fi";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { formatPriceINR } = useCurrency();
+  const { cart: cartItems, loading, updateQuantity, removeItem, fetchCart } = useCart();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const fetchCart = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/cart`);
-
-      setCartItems(response.data.items || []);
-      console.log('Fetched Cart Items:', response.data.items);
-    } catch (err) {
-      console.error("Error fetching cart:", err);
-      setError("Failed to fetch cart items");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateQuantity = async (id, quantity) => {
-    console.log(`Updating quantity for productId: ${id}, New Quantity: ${quantity}`);
-
-    if (quantity < 1) return removeItem(id);
-
-    try {
-      await axios.patch(`${API_URL}/cart/${id}`, { quantity });
-
-      fetchCart();
-    } catch (err) {
-      console.error("Error updating quantity:", err);
-      setError("Failed to update quantity");
-    }
-  };
-
-  const removeItem = async (id) => {
-    try {
-      await axios.delete(`${API_URL}/cart/${id}`);
-
-      fetchCart();
-    } catch (err) {
-      console.error("Error removing item:", err);
-      setError("Failed to remove item");
-    }
-  };
 
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
@@ -222,7 +175,7 @@ const Cart = () => {
                       {formatPriceINR(item.price || 0)} {t('each')}
                     </div>
                   )}
-                  {item.inStock ? (
+                  {item.inStock !== false ? (
                     <div className="stock-status in-stock">{t('In Stock')}</div>
                   ) : (
                     <div className="stock-status out-of-stock">{t('Out of Stock')}</div>

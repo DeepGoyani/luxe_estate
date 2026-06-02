@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCurrency } from './context/CurrencyContext';
+import { useCart } from './context/CartContext';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import './Landing.css';
 
-const HeaderNavbar = ({ cart = [] }) => {
+const HeaderNavbar = () => {
   const { 
     currency, 
     changeCurrency, 
@@ -13,6 +14,7 @@ const HeaderNavbar = ({ cart = [] }) => {
     changeLanguage,
     getCurrencySymbol 
   } = useCurrency();
+  const { cart } = useCart();
   const { t } = useTranslation();
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
@@ -128,8 +130,6 @@ const HeaderNavbar = ({ cart = [] }) => {
   );
 };
 
-HeaderNavbar.propTypes = {
-  cart: PropTypes.array,
 };
 
 export default HeaderNavbar;

@@ -27,7 +27,8 @@
       "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/1181468/pexels-photo-1181468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/1181469/pexels-photo-1181469.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
   },
   {
     "name": "Knotted Front T-Shirt",
@@ -57,6 +58,131 @@
       "https://images.pexels.com/photos/1181471/pexels-photo-1181471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/1181472/pexels-photo-1181472.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "https://images.pexels.com/photos/1181473/pexels-photo-1181473.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    ]
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Premium Knitted Cotton Crewneck",
+    "category": "tshirts",
+    "material": "Cotton",
+    "price": 8160,
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Navy",
+      "Cream",
+      "Heather Grey"
+    ],
+    "description": "Premium knitted cotton crewneck with ribbed trim.",
+    "features": [
+      "Reinforced shoulders",
+      "Pre-shrunk fabric"
+    ],
+    "rating": 4.5,
+    "ratingCount": 71,
+    "images": [
+      "https://images.pexels.com/photos/1181466/pexels-photo-1181466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181468/pexels-photo-1181468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181469/pexels-photo-1181469.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Knitted Cotton Crewneck",
+    "category": "tshirts",
+    "material": "Cotton",
+    "price": 8840,
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Navy",
+      "Cream",
+      "Heather Grey"
+    ],
+    "description": "Premium knitted cotton crewneck with ribbed trim.",
+    "features": [
+      "Reinforced shoulders",
+      "Pre-shrunk fabric"
+    ],
+    "rating": 4.7,
+    "ratingCount": 79,
+    "images": [
+      "https://images.pexels.com/photos/1181466/pexels-photo-1181466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181468/pexels-photo-1181468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181469/pexels-photo-1181469.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Modern Knotted Front T-Shirt",
+    "category": "tshirts",
+    "material": "Cotton",
+    "price": 5720,
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "White",
+      "Black",
+      "Sand"
+    ],
+    "description": "Modern t-shirt with knotted front detail and relaxed fit.",
+    "features": [
+      "Soft jersey fabric",
+      "Side slits"
+    ],
+    "rating": 4.5,
+    "ratingCount": 118,
+    "images": [
+      "https://images.pexels.com/photos/1181470/pexels-photo-1181470.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181471/pexels-photo-1181471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181472/pexels-photo-1181472.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181473/pexels-photo-1181473.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
+  },
+  {
+    "name": "Signature Knotted Front T-Shirt",
+    "category": "tshirts",
+    "material": "Cotton",
+    "price": 6760,
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "White",
+      "Black",
+      "Sand"
+    ],
+    "description": "Modern t-shirt with knotted front detail and relaxed fit.",
+    "features": [
+      "Soft jersey fabric",
+      "Side slits"
+    ],
+    "rating": 4.6,
+    "ratingCount": 101,
+    "images": [
+      "https://images.pexels.com/photos/1181470/pexels-photo-1181470.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181471/pexels-photo-1181471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181472/pexels-photo-1181472.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/1181473/pexels-photo-1181473.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
+    "inStock": true
   }
 ]
