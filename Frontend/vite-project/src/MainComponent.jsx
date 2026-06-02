@@ -59,53 +59,51 @@ const MainComponent = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    let isMounted = true;
+
+    const fetchCartAndRates = async () => {
       try {
         const conversionRatesPromise = ENABLE_CONVERSION_RATES
-          ? axios
-              .get(`${API_URL}/conversion-rates`)
-              .catch((conversionErr) => {
-                console.warn('Conversion rates unavailable:', conversionErr?.response?.status || conversionErr?.message);
-                return { data: null };
-              })
+          ? axios.get(`${API_URL}/conversion-rates`).catch(() => ({ data: null }))
           : Promise.resolve({ data: null });
 
-        const [productsResponses, cartResponse] = await Promise.all([
-          Promise.all(CATEGORIES.map(category => 
-            axios.get(`${API_URL}/${category}`)
-              .then(res => ({ category, data: res.data }))
-              .catch(error => {
-                console.error(`Error fetching ${category}:`, error);
-                return { category, data: [] };
-              })
-          )),
-          axios.get(`${API_URL}/cart`),
-        ]);
+        const cartResponse = await axios.get(`${API_URL}/cart`).catch(() => ({ data: { items: [] } }));
+        if (isMounted) {
+          setCart(cartResponse.data?.items || []);
+          setLoading(false); // Dismiss loader early
+        }
 
-        // Fire and forget conversion rates; failure is non-blocking
-        conversionRatesPromise.then(() => {}).catch(() => {});
-
-        // Transform products data
-        const productsData = productsResponses.reduce((acc, { category, data }) => {
-          acc[category] = data.map(item => ({
-            ...item,
-            categorySlug: category
-          }));
-          return acc;
-        }, {});
-
-        setProducts(productsData);
-        setCart(cartResponse.data.items || []);
-        setError(null);
+        conversionRatesPromise.catch(() => {});
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to load products. Please try again later.');
-      } finally {
-        setLoading(false);
+        console.error('Error fetching initial data:', err);
+        if (isMounted) setLoading(false);
       }
     };
 
-    fetchData();
+    const fetchCategories = () => {
+      CATEGORIES.forEach(category => {
+        axios.get(`${API_URL}/${category}`)
+          .then(res => {
+            if (isMounted) {
+              setProducts(prev => ({
+                ...prev,
+                [category]: res.data.map(item => ({ ...item, categorySlug: category }))
+              }));
+            }
+          })
+          .catch(error => {
+            console.error(`Error fetching ${category}:`, error);
+          });
+      });
+    };
+
+    fetchCartAndRates().then(() => {
+      fetchCategories();
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // formatPriceINR is already imported from useCurrency

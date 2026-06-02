@@ -73,7 +73,7 @@ const HeaderNavbar = ({ cart = [] }) => {
           </Link>
         </div>
         <div className="nav-controls">
-          <div className="dropdown">
+          <div className="dropdown notranslate" translate="no">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -96,7 +96,7 @@ const HeaderNavbar = ({ cart = [] }) => {
               </ul>
             )}
           </div>
-          <div className="dropdown">
+          <div className="dropdown notranslate" translate="no">
             <button
               onClick={(e) => {
                 e.stopPropagation();

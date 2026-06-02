@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FiShoppingCart, FiHeart, FiShare2, FiPlus, FiMinus, FiEye } from 'react-icons/fi';
 import { useCurrency } from '../../context/CurrencyContext.jsx';
+import { useTranslation } from 'react-i18next';
 import './ProductDetail.css';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
@@ -18,6 +19,7 @@ const ProductDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const { formatPriceINR } = useCurrency();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchProduct();
@@ -108,10 +110,10 @@ const ProductDetail = () => {
     return (
       <div className="product-detail-page">
         <div className="error-message">
-          <h2>Product not found</h2>
-          <p>The product you're looking for doesn't exist.</p>
+          <h2>{t('Product not found')}</h2>
+          <p>{t("The product you're looking for doesn't exist.")}</p>
           <button onClick={() => navigate('/')} className="btn-primary">
-            Go Back Home
+            {t('Go Back Home')}
           </button>
         </div>
       </div>
@@ -181,16 +183,16 @@ const ProductDetail = () => {
                 {Array.from({ length: 5 }, (_, i) => (
                   <span key={i} className={i < Math.floor(product.rating || 4.8) ? 'star-filled' : 'star-empty'}>★</span>
                 ))}
-                <span className="rating-text">1 Customer Review</span>
+                <span className="rating-text">1 {t('Customer Review')}</span>
               </div>
 
               <p className="product-description">
-                {product.description || "Experience unparalleled luxury with our premium collection. Crafted with the finest materials and attention to detail, this piece embodies timeless elegance and sophistication."}
+                {product.description || t("Experience unparalleled luxury with our premium collection. Crafted with the finest materials and attention to detail, this piece embodies timeless elegance and sophistication.")}
               </p>
 
               {product.features && (
                 <div className="product-features">
-                  <h4>Key Features:</h4>
+                  <h4>{t('Key Features')}:</h4>
                   <div className="features-list">
                     {product.features.map((feature, index) => (
                       <div key={index} className="feature-tag">
@@ -203,7 +205,7 @@ const ProductDetail = () => {
 
               <div className="product-actions">
                 <div className="quantity-selector">
-                  <label>Quantity</label>
+                  <label>{t('Quantity')}</label>
                   <div className="quantity-controls">
                     <button 
                       className="quantity-btn" 
@@ -226,7 +228,7 @@ const ProductDetail = () => {
                 <div className="action-buttons">
                   <button className="add-to-cart-btn" onClick={addToCart}>
                     <FiShoppingCart size={18} />
-                    Add to Cart
+                    {t('Add to Cart')}
                   </button>
                   <button className="wishlist-btn">
                     <FiHeart size={18} />
@@ -243,17 +245,17 @@ const ProductDetail = () => {
                   <span className="meta-value">{product._id}</span>
                 </div>
                 <div className="meta-item">
-                  <span className="meta-label">Category:</span>
+                  <span className="meta-label">{t('Category')}:</span>
                   <span className="meta-value">{category}</span>
                 </div>
                 <div className="meta-item">
-                  <span className="meta-label">Tags:</span>
-                  <span className="meta-value">Luxury, Premium, {category}</span>
+                  <span className="meta-label">{t('Tags')}:</span>
+                  <span className="meta-value">{t('Luxury')}, {t('Premium')}, {category}</span>
                 </div>
               </div>
 
               <div className="share-section">
-                <label>Share</label>
+                <label>{t('Share')}</label>
                 <div className="share-buttons">
                   <button className="share-btn">📘</button>
                   <button className="share-btn">📷</button>
@@ -264,18 +266,18 @@ const ProductDetail = () => {
           </div>
 
           <div className="product-description-section">
-            <h2>Description</h2>
+            <h2>{t('Description')}</h2>
             <p>
-              {product.description || "This exceptional piece represents the pinnacle of luxury fashion. Meticulously crafted with premium materials and traditional techniques, it offers unparalleled comfort and style. The attention to detail is evident in every stitch, making it a perfect addition to any sophisticated wardrobe."}
+              {product.description || t("This exceptional piece represents the pinnacle of luxury fashion. Meticulously crafted with premium materials and traditional techniques, it offers unparalleled comfort and style. The attention to detail is evident in every stitch, making it a perfect addition to any sophisticated wardrobe.")}
             </p>
             <p>
-              Designed for the discerning individual who appreciates quality and elegance, this product combines timeless design with modern functionality. Whether for special occasions or everyday luxury, it delivers exceptional value and lasting satisfaction.
+              {t("Designed for the discerning individual who appreciates quality and elegance, this product combines timeless design with modern functionality. Whether for special occasions or everyday luxury, it delivers exceptional value and lasting satisfaction.")}
             </p>
           </div>
 
           <div className="related-products-section">
             <div className="section-header">
-              <h2>You May Also Like</h2>
+              <h2>{t('You May Also Like')}</h2>
               <div className="section-divider"></div>
             </div>
             <div className="related-products-grid">
@@ -306,7 +308,7 @@ const ProductDetail = () => {
             </div>
             <div className="view-all-container">
               <Link to={`/category/${category}`} className="view-all-btn">
-                View All {category} Products →
+                {t('View All')} {t(category)} {t('Products')} →
               </Link>
             </div>
           </div>
