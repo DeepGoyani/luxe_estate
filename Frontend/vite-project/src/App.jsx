@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from 'react';
+import ScrollToTop from "./components/ScrollToTop";
 import MainComponent from "./MainComponent";
 import Cart from "./assets/Cart/Cart";
 import ContactPage from "./assets/Contactus/ContactUs";
@@ -29,6 +30,7 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <HeaderNavbar />
       <main>
         <Routes>
