@@ -130,6 +130,4 @@ const HeaderNavbar = () => {
   );
 };
 
-};
-
 export default HeaderNavbar;
